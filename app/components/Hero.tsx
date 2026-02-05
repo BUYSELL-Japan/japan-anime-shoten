@@ -2,14 +2,16 @@ import { useState, useEffect } from "react";
 
 const slides = [
     {
-        image: "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&q=80&w=2000", // Tokyo/Japan vibe
-        title: "Japan Directly To You",
-        subtitle: "Authentic Anime Goods"
+        image: "https://images.unsplash.com/photo-1618336753974-aae8e04506aa?auto=format&fit=crop&q=80&w=2000", // Clean minimal anime/figure vibe
+        title: "New Arrivals",
+        subtitle: "Check out the latest authentic figures from Japan.",
+        cta: "Shop Now"
     },
     {
-        image: "https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&q=80&w=2000", // Japanese traditional/modern fusion
-        title: "New Arrivals",
-        subtitle: "Limited Edition Figures"
+        image: "https://images.unsplash.com/photo-1607604276583-eef5f0b7ac1d?auto=format&fit=crop&q=80&w=2000", // Collecting vibe
+        title: "Best Sellers",
+        subtitle: "The most popular items this month.",
+        cta: "View Top 10"
     }
 ];
 
@@ -19,12 +21,12 @@ export default function Hero() {
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrent((prev) => (prev + 1) % slides.length);
-        }, 6000);
+        }, 5000);
         return () => clearInterval(timer);
     }, []);
 
     return (
-        <section style={{ position: "relative", height: "80vh", minHeight: "600px", overflow: "hidden", borderBottom: "3px solid var(--color-gold)" }}>
+        <section style={{ position: "relative", height: "500px", overflow: "hidden", background: "#f4f4f4" }}>
             {slides.map((slide, index) => (
                 <div
                     key={index}
@@ -35,59 +37,51 @@ export default function Hero() {
                         width: "100%",
                         height: "100%",
                         opacity: index === current ? 1 : 0,
-                        transition: "opacity 1.5s ease-in-out",
-                        background: `url(${slide.image}) center/cover no-repeat`,
+                        transition: "opacity 0.8s ease-in-out",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center"
                     }}
                 >
-                    {/* Dark Overlay with Gradient */}
-                    <div style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        background: "radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(15,15,16,0.9) 100%)"
-                    }} />
+                    {/* Background Image with slight overlay for text readability if needed, but keeping it clean */}
+                    <div style={{ position: "absolute", inset: 0 }}>
+                        <img src={slide.image} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.1)" }}></div>
+                    </div>
 
-                    <div className="container" style={{
-                        position: "relative",
-                        height: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        zIndex: 10,
-                        textAlign: "center"
-                    }}>
-                        <div style={{
-                            border: "1px solid var(--color-gold)",
-                            padding: "var(--spacing-xl)",
-                            background: "rgba(15, 15, 16, 0.7)",
-                            backdropFilter: "blur(5px)",
-                            maxWidth: "800px"
-                        }}>
-                            <h1 className="title-serif text-gold" style={{
-                                fontSize: "clamp(2.5rem, 5vw, 4rem)",
-                                marginBottom: "var(--spacing-md)",
-                                textShadow: "0 2px 10px rgba(0,0,0,0.8)"
-                            }}>
+                    <div className="container" style={{ position: "relative", zIndex: 10, width: "100%", color: "#fff", textShadow: "0 2px 4px rgba(0,0,0,0.3)" }}>
+                        <div style={{ maxWidth: "500px" }}>
+                            <h2 style={{ fontSize: "3.5rem", fontWeight: "700", marginBottom: "1rem", lineHeight: 1.1 }}>
                                 {slide.title}
-                            </h1>
-                            <p style={{
-                                fontSize: "1.5rem",
-                                marginBottom: "var(--spacing-xl)",
-                                fontFamily: "'Noto Serif JP', serif",
-                                letterSpacing: "0.2em"
-                            }}>
+                            </h2>
+                            <p style={{ fontSize: "1.2rem", marginBottom: "2rem", fontWeight: "500" }}>
                                 {slide.subtitle}
                             </p>
-                            <button className="btn-primary">
-                                View Collection
+                            <button className="btn-primary" style={{ border: "2px solid white", background: "transparent" }}>
+                                {slide.cta}
                             </button>
                         </div>
                     </div>
                 </div>
             ))}
+
+            {/* Dots */}
+            <div style={{ position: "absolute", bottom: "20px", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "10px", zIndex: 20 }}>
+                {slides.map((_, idx) => (
+                    <button
+                        key={idx}
+                        onClick={() => setCurrent(idx)}
+                        style={{
+                            width: "12px",
+                            height: "12px",
+                            borderRadius: "50%",
+                            background: idx === current ? "#fff" : "rgba(255,255,255,0.5)",
+                            border: "none",
+                            cursor: "pointer"
+                        }}
+                    />
+                ))}
+            </div>
         </section>
     );
 }

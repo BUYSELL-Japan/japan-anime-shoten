@@ -1,28 +1,30 @@
 export default function TrustBadges() {
     const badges = [
-        { icon: "⛩️", title: "Global Shipping", desc: "Direct from Japan" },
-        { icon: "💮", title: "100% Authentic", desc: "Guaranteed Genuine" },
-        { icon: "🛡️", title: "Secure Payment", desc: "Safe Encrypted Checkout" },
-        { icon: "🏯", title: "Fast Dispatch", desc: "Tracked Airmail" },
+        { icon: "✈️", title: "Worldwide Shipping", desc: "Tracked & Insured" },
+        { icon: "💎", title: "100% Authentic", desc: "Guaranteed Genuine" },
+        { icon: "🔒", title: "Secure Payment", desc: "256-bit SSL Encryption" },
+        { icon: "💬", title: "Support 24/7", desc: "Dedicated Team" },
     ];
 
     return (
-        <section className="container" style={{ padding: "var(--spacing-2xl) 0" }}>
-            <div style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                gap: "var(--spacing-lg)",
-                borderTop: "1px solid #333",
-                borderBottom: "1px solid #333",
-                padding: "var(--spacing-2xl) 0"
-            }}>
-                {badges.map((badge, idx) => (
-                    <div key={idx} style={{ textAlign: "center", color: "var(--text-primary)" }}>
-                        <div style={{ fontSize: "2.5rem", marginBottom: "var(--spacing-md)", color: "var(--color-gold)" }}>{badge.icon}</div>
-                        <h3 style={{ fontSize: "1.1rem", fontFamily: "'Cinzel', serif", color: "var(--color-gold)", marginBottom: "var(--spacing-xs)" }}>{badge.title}</h3>
-                        <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", fontFamily: "'Noto Serif JP', serif" }}>{badge.desc}</p>
-                    </div>
-                ))}
+        <section style={{ borderTop: "1px solid var(--color-border)", borderBottom: "1px solid var(--color-border)", background: "#fafafa" }}>
+            <div className="container" style={{ padding: "var(--spacing-xl) 0" }}>
+                <div style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    justifyContent: "space-around",
+                    gap: "var(--spacing-lg)"
+                }}>
+                    {badges.map((badge, idx) => (
+                        <div key={idx} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                            <div style={{ fontSize: "2rem" }}>{badge.icon}</div>
+                            <div>
+                                <h4 style={{ fontWeight: "700", fontSize: "0.95rem", color: "var(--color-text)" }}>{badge.title}</h4>
+                                <p style={{ fontSize: "0.85rem", color: "var(--color-text-light)" }}>{badge.desc}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
         </section>
     );

@@ -9,69 +9,50 @@ export interface Product {
 export default function ProductCard({ product }: { product: Product }) {
     return (
         <div style={{
-            background: "var(--bg-secondary)",
-            borderRadius: "var(--radius-sm)",
-            overflow: "hidden",
-            border: "1px solid #333",
-            transition: "all 0.4s ease",
-            position: "relative"
+            background: "#fff",
+            transition: "transform 0.2s",
+            cursor: "pointer"
         }}
-            onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-10px)";
-                e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.5)";
-                e.currentTarget.style.borderColor = "var(--color-gold)";
-            }}
-            onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "none";
-                e.currentTarget.style.boxShadow = "none";
-                e.currentTarget.style.borderColor = "#333";
-            }}
+            className="group"
         >
-            <div style={{ height: "300px", overflow: "hidden", position: "relative" }}>
+            <div style={{ position: "relative", paddingBottom: "100%", overflow: "hidden", marginBottom: "12px", borderRadius: "var(--radius-md)", background: "#f0f0f0" }}>
                 <img
                     src={product.image}
                     alt={product.title}
-                    style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.6s ease" }}
-                    onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"}
+                    style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        transition: "transform 0.5s ease"
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
                     onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
                 />
-                <div style={{
-                    position: "absolute",
-                    top: "10px",
-                    right: "10px",
-                    background: "var(--color-crimson)",
-                    color: "white",
-                    padding: "4px 8px",
-                    fontSize: "0.8rem",
-                    fontWeight: "bold",
-                    border: "1px solid var(--color-gold)"
-                }}>
-                    NEW
-                </div>
+                {/* Quick Add Button on Hover could go here */}
             </div>
-            <div style={{ padding: "var(--spacing-lg)", textAlign: "center" }}>
+
+            <div>
                 <h3 style={{
-                    fontSize: "1.1rem",
-                    marginBottom: "0.5rem",
-                    height: "3rem",
+                    fontSize: "1rem",
+                    fontWeight: "500",
+                    marginBottom: "4px",
+                    color: "var(--color-text)",
+                    lineHeight: "1.4",
+                    height: "2.8em",
                     overflow: "hidden",
-                    fontFamily: "'Cinzel', serif"
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical"
                 }}>
                     {product.title}
                 </h3>
-                <div style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginBottom: "1rem",
-                    gap: "1rem"
-                }}>
-                    <span className="text-gold" style={{ fontSize: "1.4rem", fontWeight: "bold" }}>{product.price}</span>
-                    <div style={{ color: "var(--color-gold)", fontSize: "0.9rem" }}>
-                        {"★".repeat(product.rating)}{"☆".repeat(5 - product.rating)}
-                    </div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <span style={{ color: "var(--color-primary)", fontWeight: "700", fontSize: "1.1rem" }}>{product.price}</span>
+                    <span style={{ fontSize: "0.8rem", color: "#fbbf24" }}>{"★".repeat(product.rating)}</span>
                 </div>
-                <button className="btn-secondary" style={{ width: "100%" }}>Add to Cart</button>
             </div>
         </div>
     );

@@ -1,34 +1,22 @@
 export default function ShopIntro() {
     return (
-        <section className="container" style={{ padding: "var(--spacing-3xl) var(--spacing-md)", textAlign: "center" }}>
-            <div style={{
-                maxWidth: "800px",
-                margin: "0 auto",
-                padding: "var(--spacing-2xl)",
-                border: "1px solid var(--color-gold)",
-                position: "relative"
-            }}>
-                {/* Decorative corners */}
-                <div style={{ position: "absolute", top: "-5px", left: "-5px", width: "30px", height: "30px", borderTop: "3px solid var(--color-gold)", borderLeft: "3px solid var(--color-gold)" }} />
-                <div style={{ position: "absolute", top: "-5px", right: "-5px", width: "30px", height: "30px", borderTop: "3px solid var(--color-gold)", borderRight: "3px solid var(--color-gold)" }} />
-                <div style={{ position: "absolute", bottom: "-5px", left: "-5px", width: "30px", height: "30px", borderBottom: "3px solid var(--color-gold)", borderLeft: "3px solid var(--color-gold)" }} />
-                <div style={{ position: "absolute", bottom: "-5px", right: "-5px", width: "30px", height: "30px", borderBottom: "3px solid var(--color-gold)", borderRight: "3px solid var(--color-gold)" }} />
-
-                <h2 className="title-serif text-gold" style={{ fontSize: "2rem", marginBottom: "var(--spacing-lg)" }}>
-                    From Akihabara to the World
+        <section className="container" style={{ padding: "var(--spacing-2xl) 0", textAlign: "center" }}>
+            <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+                <h2 className="title-main" style={{ marginBottom: "var(--spacing-md)" }}>
+                    The Best Japanese Goods, <span className="text-red">Directly To You</span>
                 </h2>
                 <p style={{
                     fontSize: "1.1rem",
-                    color: "var(--text-primary)",
-                    lineHeight: "2",
-                    marginBottom: "var(--spacing-xl)",
-                    fontFamily: "'Noto Serif JP', serif"
+                    color: "var(--color-text-light)",
+                    marginBottom: "var(--spacing-lg)"
                 }}>
-                    We are dedicated to delivering rare and authentic anime figures directly from the heart of Tokyo.
-                    Curated with the spirit of "Omotenashi" (Japanese Hospitality).
-                    When you shop with <strong className="text-gold">Japan Anime Shoten</strong>, you are securing a piece of authentic otaku culture.
+                    Japan Anime Shoten is your premier destination for authentic anime figures, trading cards, and exclusive merchandise.
+                    Sourced directly from Tokyo, we ensure every item is 100% genuine and shipped with care.
                 </p>
-                <button className="btn-secondary">Read Our Story</button>
+                <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
+                    <button className="btn-primary">View New Arrivals</button>
+                    <button className="btn-secondary">About Us</button>
+                </div>
             </div>
         </section>
     );
