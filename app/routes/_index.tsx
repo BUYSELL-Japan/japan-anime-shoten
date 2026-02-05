@@ -23,13 +23,14 @@ export default function Index() {
                 left: 0,
                 width: "100%",
                 zIndex: 100,
-                padding: "var(--spacing-md)",
-                background: "linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)"
+                padding: "var(--spacing-lg)",
+                background: "linear-gradient(to bottom, rgba(0,0,0,0.9), transparent)",
+                borderBottom: "1px solid rgba(212, 175, 55, 0.2)"
             }}>
                 <div className="container" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <h1 className="neon-text-pink" style={{ fontSize: "1.5rem", fontWeight: "bold" }}>JAPAN ANIME SHOTEN</h1>
+                    <h1 className="title-serif text-gold" style={{ fontSize: "1.5rem", fontWeight: "bold", letterSpacing: "2px" }}>JAPAN ANIME SHOTEN</h1>
                     <nav>
-                        <button className="btn-secondary" style={{ padding: "0.5rem 1rem", fontSize: "0.9rem" }}>Cart (0)</button>
+                        <button className="btn-secondary" style={{ padding: "0.5rem 1rem", fontSize: "0.8rem" }}>Cart (0)</button>
                     </nav>
                 </div>
             </header>
@@ -43,14 +44,18 @@ export default function Index() {
 
             <footer style={{
                 borderTop: "1px solid #333",
-                padding: "var(--spacing-xl) 0",
+                padding: "var(--spacing-2xl) 0",
                 textAlign: "center",
+                background: "#050505",
                 color: "var(--text-muted)",
                 marginTop: "var(--spacing-2xl)"
             }}>
                 <div className="container">
+                    <h2 className="title-serif text-gold" style={{ fontSize: "1.2rem", marginBottom: "var(--spacing-md)" }}>JAPAN ANIME SHOTEN</h2>
                     <p>&copy; 2026 Japan Anime Shoten. All rights reserved.</p>
-                    <p style={{ fontSize: "0.8rem", marginTop: "var(--spacing-sm)" }}>Direct from Akihabara, Tokyo.</p>
+                    <p style={{ fontSize: "0.8rem", marginTop: "var(--spacing-sm)", fontFamily: "'Noto Serif JP', serif" }}>
+                        Direct from Akihabara, Tokyo.
+                    </p>
                 </div>
             </footer>
         </div>
