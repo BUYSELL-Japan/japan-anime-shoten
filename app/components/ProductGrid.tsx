@@ -21,8 +21,8 @@ export default function ProductGrid() {
                 <a href="#" style={{ fontWeight: "600", color: "var(--color-primary)", fontSize: "0.9rem" }}>View All Products &rarr;</a>
             </div>
             <div className="grid-products">
-                {MOCK_PRODUCTS.map(product => (
-                    <ProductCard key={product.id} product={product} />
+                {MOCK_PRODUCTS.map((product, idx) => (
+                    <ProductCard key={product.id} product={product} index={idx} />
                 ))}
             </div>
         </section>

@@ -1,6 +1,7 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
 import Hero from "~/components/Hero";
 import ProductGrid from "~/components/ProductGrid";
+import NewArrivals from "~/components/NewArrivals";
 import TrustBadges from "~/components/TrustBadges";
 import ShopIntro from "~/components/ShopIntro";
 
@@ -30,7 +31,7 @@ export default function Index() {
                     </h1>
 
                     {/* Nav */}
-                    <nav style={{ display: "none", md: { display: "flex" } }}>
+                    <nav style={{ display: "none", "@media (min-width: 768px)": { display: "flex" } } as any}>
                         <ul style={{ display: "flex", gap: "24px", listStyle: "none", fontWeight: "500" }}>
                             <li><a href="#">New Arrivals</a></li>
                             <li><a href="#">Figures</a></li>
@@ -50,6 +51,7 @@ export default function Index() {
 
             <main style={{ flex: 1 }}>
                 <Hero />
+                <NewArrivals />
                 <TrustBadges />
                 <ProductGrid />
                 <ShopIntro />

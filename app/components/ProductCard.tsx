@@ -6,14 +6,14 @@ export interface Product {
     rating: number;
 }
 
-export default function ProductCard({ product }: { product: Product }) {
+export default function ProductCard({ product, index = 0 }: { product: Product, index?: number }) {
     return (
         <div style={{
             background: "#fff",
-            transition: "transform 0.2s",
-            cursor: "pointer"
+            cursor: "pointer",
+            animationDelay: `${index * 0.1}s` /* Stagger delay */
         }}
-            className="group"
+            className="group hover-lift animate-entry"
         >
             <div style={{ position: "relative", paddingBottom: "100%", overflow: "hidden", marginBottom: "12px", borderRadius: "var(--radius-md)", background: "#f0f0f0" }}>
                 <img
@@ -31,7 +31,7 @@ export default function ProductCard({ product }: { product: Product }) {
                     onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
                     onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
                 />
-                {/* Quick Add Button on Hover could go here */}
+                {/* Visual cue on hover could be added here */}
             </div>
 
             <div>
