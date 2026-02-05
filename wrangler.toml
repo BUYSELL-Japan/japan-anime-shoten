@@ -7,4 +7,7 @@ binding = "DB"
 database_name = "japan-anime-shoten-db"
 database_id = "11e1901c-f5e8-4879-80a6-8b2b784fb113"
 
+[pages_build_output_dir]
+public = "build/client"
+
 
