@@ -11,3 +11,5 @@ database_id = "11e1901c-f5e8-4879-80a6-8b2b784fb113"
 public = "build/client"
 
 
+
+# Force deployment trigger
