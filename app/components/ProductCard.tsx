@@ -1,59 +1,52 @@
+import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
+
 export interface Product {
     id: string;
     title: string;
     price: string;
     image: string;
-    rating: number;
+    rating?: number;
 }
 
-export default function ProductCard({ product, index = 0 }: { product: Product, index?: number }) {
+interface ProductCardProps {
+    product: Product;
+    index?: number;
+}
+
+export default function ProductCard({ product, index = 0 }: ProductCardProps) {
+    const { t } = useTranslation();
+
     return (
-        <div style={{
-            background: "#fff",
-            cursor: "pointer",
-            animationDelay: `${index * 0.1}s` /* Stagger delay */
-        }}
-            className="group hover-lift animate-entry"
+        <motion.div
+            className="product-card group"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            style={{
+                background: "#fff",
+                cursor: "pointer",
+                position: "relative"
+            }}
         >
-            <div style={{ position: "relative", paddingBottom: "100%", overflow: "hidden", marginBottom: "12px", borderRadius: "var(--radius-md)", background: "#f0f0f0" }}>
+            <div className="product-image-container" style={{ position: "relative", overflow: "hidden", borderRadius: "8px", background: "#f0f0f0", aspectRatio: "1/1" }}>
                 <img
                     src={product.image}
                     alt={product.title}
-                    style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        transition: "transform 0.5s ease"
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
-                    onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+                    className="product-image transition-transform duration-500 group-hover:scale-105"
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    loading="lazy"
                 />
-                {/* Visual cue on hover could be added here */}
-            </div>
-
-            <div>
-                <h3 style={{
-                    fontSize: "1rem",
-                    fontWeight: "500",
-                    marginBottom: "4px",
-                    color: "var(--color-text)",
-                    lineHeight: "1.4",
-                    height: "2.8em",
-                    overflow: "hidden",
-                    display: "-webkit-box",
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: "vertical"
-                }}>
-                    {product.title}
-                </h3>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <span style={{ color: "var(--color-primary)", fontWeight: "700", fontSize: "1.1rem" }}>{product.price}</span>
-                    <span style={{ fontSize: "0.8rem", color: "#fbbf24" }}>{"★".repeat(product.rating)}</span>
+                <div className="product-overlay absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <button className="add-to-cart-btn bg-white text-black px-4 py-2 rounded-full font-bold transform translate-y-4 group-hover:translate-y-0 transition-transform">
+                        {t("add_to_cart")}
+                    </button>
                 </div>
             </div>
-        </div>
+            <div className="product-info mt-3">
+                <h3 className="product-title font-medium text-lg leading-tight line-clamp-2">{product.title}</h3>
+                <p className="product-price text-primary font-bold mt-1 text-xl">{t("price_yen", { price: product.price })}</p>
+            </div>
+        </motion.div>
     );
 }

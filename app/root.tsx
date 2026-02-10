@@ -11,6 +11,9 @@ import {
     ScrollRestoration,
     useLoaderData,
 } from "@remix-run/react";
+import { useChangeLanguage } from "remix-i18next/react";
+import { useTranslation } from "react-i18next";
+import i18next from "./i18n.server";
 
 import styles from "./styles/global.css?url";
 
@@ -28,24 +31,31 @@ export const links: LinksFunction = () => [
     },
 ];
 
-export async function loader({ context }: LoaderFunctionArgs) {
-    const { env } = context.cloudflare;
-    const { results } = await env.DB.prepare("SELECT * FROM translations").all();
-
-    // Convert array to object for easier access
-    const translations = results.reduce((acc: any, curr: any) => {
-        acc[curr.id] = curr;
-        return acc;
-    }, {});
-
-    return json({ translations });
+export async function loader({ request }: LoaderFunctionArgs) {
+    let locale = await i18next.getLocale(request);
+    return json({ locale });
 }
 
+export let handle = {
+    // In the handle export, we can add a i18n key with namespaces our route
+    // will need to load. This key can be a single string or an array of strings.
+    // TIP: In most cases, you should set this to your defaultNS from your i18n config
+    // or if you did not set one, set it to the i18next default namespace "translation"
+    i18n: "common",
+};
+
 export default function App() {
-    const { translations } = useLoaderData<typeof loader>();
+    let { locale } = useLoaderData<typeof loader>();
+    let { i18n } = useTranslation();
+
+    // This hook will change the i18n instance language to the current locale
+    // detected by the loader, this way, when we do some client-side
+    // transitions, the data from the loader will trigger the change of
+    // language.
+    useChangeLanguage(locale);
 
     return (
-        <html lang="en">
+        <html lang={locale} dir={i18n.dir()}>
             <head>
                 <meta charSet="utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -53,7 +63,7 @@ export default function App() {
                 <Links />
             </head>
             <body>
-                <Outlet context={{ translations }} />
+                <Outlet />
                 <ScrollRestoration />
                 <Scripts />
             </body>

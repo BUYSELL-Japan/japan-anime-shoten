@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS translations (
 );
 
 -- Initial Data
-INSERT INTO translations (id, ja, en) VALUES 
+INSERT OR IGNORE INTO translations (id, ja, en) VALUES 
 ('hero_title', 'Japan Directly To You', 'Japan Directly To You'),
 ('hero_subtitle', '本物のアニメグッズをあなたへ', 'Authentic Anime Goods'),
 ('btn_shop_now', '今すぐ購入', 'Shop Now'),

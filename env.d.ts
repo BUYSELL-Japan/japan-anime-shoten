@@ -6,6 +6,8 @@ declare module "@remix-run/cloudflare" {
         cloudflare: {
             env: {
                 DB: D1Database;
+                SHOPIFY_STORE_DOMAIN: string;
+                SHOPIFY_STOREFRONT_ACCESS_TOKEN: string;
             };
         };
     }

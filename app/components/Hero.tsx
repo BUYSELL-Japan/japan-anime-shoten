@@ -1,22 +1,15 @@
+import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 
-const slides = [
-    {
-        image: "https://images.unsplash.com/photo-1618336753974-aae8e04506aa?auto=format&fit=crop&q=80&w=2000", // Clean minimal anime/figure vibe
-        title: "New Arrivals",
-        subtitle: "Check out the latest authentic figures from Japan.",
-        cta: "Shop Now"
-    },
-    {
-        image: "https://images.unsplash.com/photo-1607604276583-eef5f0b7ac1d?auto=format&fit=crop&q=80&w=2000", // Collecting vibe
-        title: "Best Sellers",
-        subtitle: "The most popular items this month.",
-        cta: "View Top 10"
-    }
-];
-
 export default function Hero() {
+    const { t } = useTranslation();
     const [current, setCurrent] = useState(0);
+
+    const slides = [
+        { image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=2000&auto=format&fit=crop", title: "Latest Figures" },
+        { image: "https://images.unsplash.com/photo-1615653051968-69c27954d9b9?q=80&w=2000&auto=format&fit=crop", title: "Rare Collectibles" },
+    ];
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -43,45 +36,35 @@ export default function Hero() {
                         justifyContent: "center"
                     }}
                 >
-                    {/* Background Image with slight overlay for text readability if needed, but keeping it clean */}
                     <div style={{ position: "absolute", inset: 0 }}>
                         <img src={slide.image} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.1)" }}></div>
+                        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.3)" }}></div>
                     </div>
 
-                    <div className="container" style={{ position: "relative", zIndex: 10, width: "100%", color: "#fff", textShadow: "0 2px 4px rgba(0,0,0,0.3)" }}>
-                        <div style={{ maxWidth: "500px" }}>
-                            <h2 style={{ fontSize: "3.5rem", fontWeight: "700", marginBottom: "1rem", lineHeight: 1.1 }}>
-                                {slide.title}
-                            </h2>
-                            <p style={{ fontSize: "1.2rem", marginBottom: "2rem", fontWeight: "500" }}>
-                                {slide.subtitle}
-                            </p>
-                            <button className="btn-primary" style={{ border: "2px solid white", background: "transparent" }}>
-                                {slide.cta}
-                            </button>
-                        </div>
+                    <div className="container" style={{ position: "relative", zIndex: 10, width: "100%", color: "#fff", textAlign: "center", textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>
+                        <motion.h1
+                            key={`h1-${index}`}
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: index === current ? 1 : 0, y: index === current ? 0 : 30 }}
+                            transition={{ duration: 0.8 }}
+                            style={{ fontSize: "3rem", fontWeight: "800", marginBottom: "1rem" }}
+                        >
+                            {t("title")}
+                        </motion.h1>
+                        <motion.p
+                            key={`p-${index}`}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: index === current ? 1 : 0, y: index === current ? 0 : 20 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            style={{ fontSize: "1.2rem", maxWidth: "600px", margin: "0 auto" }}
+                        >
+                            {t("welcome")}
+                            <br />
+                            <span style={{ fontSize: "0.9rem", opacity: 0.9, marginTop: "0.5rem", display: "block" }}>{t("hero_subtitle")}</span>
+                        </motion.p>
                     </div>
                 </div>
             ))}
-
-            {/* Dots */}
-            <div style={{ position: "absolute", bottom: "20px", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "10px", zIndex: 20 }}>
-                {slides.map((_, idx) => (
-                    <button
-                        key={idx}
-                        onClick={() => setCurrent(idx)}
-                        style={{
-                            width: "12px",
-                            height: "12px",
-                            borderRadius: "50%",
-                            background: idx === current ? "#fff" : "rgba(255,255,255,0.5)",
-                            border: "none",
-                            cursor: "pointer"
-                        }}
-                    />
-                ))}
-            </div>
         </section>
     );
 }

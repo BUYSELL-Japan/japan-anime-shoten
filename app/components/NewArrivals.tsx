@@ -1,21 +1,34 @@
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import ProductCard from "./ProductCard";
-import type { Product } from "./ProductCard";
+import { useTranslation } from "react-i18next";
 
-const NEW_ARRIVALS: Product[] = [
-    { id: "new-1", title: "Scale Figure: Miku Hatsune 15th Anniversary", price: "¥22,000", image: "https://placehold.co/400x500/f5f5f5/333?text=Miku+15th", rating: 5 },
-    { id: "new-2", title: "One Piece TCG: OP-06 Wings of Captain", price: "¥7,500", image: "https://placehold.co/400x500/f5f5f5/333?text=OP-06", rating: 5 },
-    { id: "new-3", title: "Nendoroid: Spy x Family Anya Forger", price: "¥6,500", image: "https://placehold.co/400x500/f5f5f5/333?text=Anya", rating: 5 },
-    { id: "new-4", title: "Gundam MGEX 1/100 Strike Freedom", price: "¥15,400", image: "https://placehold.co/400x500/f5f5f5/333?text=MGEX+SF", rating: 5 },
-    { id: "new-5", title: "Final Fantasy VII Rebirth: Cloud Strife", price: "¥18,800", image: "https://placehold.co/400x500/f5f5f5/333?text=Cloud", rating: 4 },
-];
+interface Product {
+    id: string;
+    title: string;
+    price: string;
+    image: string;
+}
 
-export default function NewArrivals() {
+interface NewArrivalsProps {
+    products: Product[];
+}
+
+export default function NewArrivals({ products }: NewArrivalsProps) {
+    const { t } = useTranslation();
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const { scrollXProgress } = useScroll({ container: scrollRef });
+
+    if (!products || products.length === 0) {
+        return null;
+    }
+
     return (
         <section style={{ background: "#f9f9f9", padding: "var(--spacing-2xl) 0" }}>
             <div className="container">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "var(--spacing-lg)" }}>
                     <h2 className="title-main" style={{ marginBottom: 0 }}>
-                        <span style={{ borderBottom: "3px solid var(--color-primary)" }}>New Arrivals</span>
+                        <span style={{ borderBottom: "3px solid var(--color-primary)" }}>{t("new_arrivals")}</span>
                     </h2>
                     <a href="#" className="text-red" style={{ fontWeight: "700", fontSize: "0.9rem" }}>View All New Items &rarr;</a>
                 </div>
@@ -29,7 +42,7 @@ export default function NewArrivals() {
                     scrollSnapType: "x mandatory",
                     WebkitOverflowScrolling: "touch"
                 }}>
-                    {NEW_ARRIVALS.map((product, idx) => (
+                    {products.map((product, idx) => (
                         <div key={product.id} style={{ minWidth: "280px", scrollSnapAlign: "start" }}>
                             <ProductCard product={product} index={idx} />
                         </div>
