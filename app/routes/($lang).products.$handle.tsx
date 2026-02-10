@@ -56,9 +56,9 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export async function loader({ request, params, context }: LoaderFunctionArgs) {
-    const { handle } = params;
+    const { handle, lang } = params;
     const env = context.cloudflare.env as any;
-    const locale = await i18next.getLocale(request);
+    const locale = lang || "en";
 
     const QUERY = `
     query ProductByHandle($handle: String!) {

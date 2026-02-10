@@ -20,9 +20,9 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export async function loader({ request, context }: LoaderFunctionArgs) {
+export async function loader({ request, params, context }: LoaderFunctionArgs) {
   const env = context.cloudflare.env as any;
-  const locale = await i18next.getLocale(request);
+  const locale = params.lang || "en";
 
   // Fallback if no credentials (e.g. initial dev)
   if (!env.SHOPIFY_STORE_DOMAIN || !env.SHOPIFY_STOREFRONT_ACCESS_TOKEN) {

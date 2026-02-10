@@ -31,8 +31,22 @@ export const links: LinksFunction = () => [
     },
 ];
 
-export async function loader({ request }: LoaderFunctionArgs) {
-    let locale = await i18next.getLocale(request);
+export async function loader({ request, params }: LoaderFunctionArgs) {
+    // Attempt to get locale from params (if available) or URL path
+    let locale = params.lang;
+
+    if (!locale) {
+        const url = new URL(request.url);
+        const firstSegment = url.pathname.split('/').filter(Boolean)[0];
+        if (i18n.supportedLngs.includes(firstSegment)) {
+            locale = firstSegment;
+        }
+    }
+
+    if (!locale) {
+        locale = await i18next.getLocale(request);
+    }
+
     return json({ locale });
 }
 
