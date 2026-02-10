@@ -106,6 +106,11 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
 
         // Fetch Translation from D1
         let translation = null;
+
+        // Normalize locale for D1 (e.g., zh-CN -> zh_cn)
+        const d1Locale = locale.toLowerCase().replace('-', '_');
+        console.log(`[ProductLoader] Fetching translation for ${product.id} in ${d1Locale}`);
+
         if (env.DB) {
             const stmt = env.DB.prepare(`
                 SELECT t.title, t.body_html
@@ -113,9 +118,12 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
                 JOIN product_translations t ON p.id = t.product_id
                 WHERE p.shopify_product_id = ? AND t.language_code = ?
             `);
-            const result = await stmt.bind(product.id, locale).first();
+            const result = await stmt.bind(product.id, d1Locale).first();
             if (result) {
+                console.log(`[ProductLoader] Translation found: ${result.title}`);
                 translation = result;
+            } else {
+                console.log(`[ProductLoader] No translation found.`);
             }
         }
 

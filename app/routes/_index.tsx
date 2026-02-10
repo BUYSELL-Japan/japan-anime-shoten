@@ -89,6 +89,10 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
     // Fetch Translations from D1
     let translationsMap: Record<string, { title: string }> = {};
 
+    // Normalize locale for D1 (e.g., zh-CN -> zh_cn)
+    const d1Locale = locale.toLowerCase().replace('-', '_');
+    console.log(`[Loader] Fetching translations for locale: ${d1Locale} (Original: ${locale})`);
+
     if (env.DB && shopifyIds.length > 0) {
       const placeholders = shopifyIds.map(() => '?').join(',');
       const stmt = env.DB.prepare(`
@@ -99,13 +103,14 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
                 AND t.language_code = ?
             `);
 
-      const results = await stmt.bind(...shopifyIds, locale).all();
+      const results = await stmt.bind(...shopifyIds, d1Locale).all();
 
       if (results.results) {
         results.results.forEach((row: any) => {
           translationsMap[row.shopify_product_id] = { title: row.title };
         });
       }
+      console.log(`[Loader] Found ${results.results?.length || 0} translations.`);
     }
 
     const formatProduct = (node: any) => {
