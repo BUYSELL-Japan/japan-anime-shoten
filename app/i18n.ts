@@ -1,6 +1,6 @@
 export default {
-    supportedLngs: ["ja", "en", "zh-TW", "zh-CN", "ko", "th"],
-    fallbackLng: "ja",
+    supportedLngs: ["en", "zh-TW", "zh-CN", "ko", "th"],
+    fallbackLng: "en",
     defaultNS: "common",
     // Disabling suspense is recommended for Remix
     react: { useSuspense: false },

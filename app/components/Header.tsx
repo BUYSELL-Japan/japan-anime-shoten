@@ -42,7 +42,6 @@ export default function Header() {
                         onChange={(e) => changeLanguage(e.target.value)}
                         style={{ padding: "4px", borderRadius: "4px", border: "1px solid #ddd" }}
                     >
-                        <option value="ja">日本語</option>
                         <option value="en">English</option>
                         <option value="zh-TW">繁體中文</option>
                         <option value="zh-CN">简体中文</option>
