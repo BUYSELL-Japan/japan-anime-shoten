@@ -1,3 +1,4 @@
+import { Link } from "@remix-run/react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
@@ -6,7 +7,8 @@ export interface Product {
     title: string;
     price: string;
     image: string;
-    rating?: number;
+    rating: number;
+    handle?: string;
 }
 
 interface ProductCardProps {
@@ -25,27 +27,36 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
             transition={{ duration: 0.5, delay: index * 0.1 }}
             style={{
                 background: "#fff",
-                cursor: "pointer",
+                border: "1px solid #eee",
+                borderRadius: "8px",
+                overflow: "hidden",
                 position: "relative"
             }}
+            whileHover={{ y: -5 }}
         >
-            <div className="product-image-container" style={{ position: "relative", overflow: "hidden", borderRadius: "8px", background: "#f0f0f0", aspectRatio: "1/1" }}>
-                <img
-                    src={product.image}
-                    alt={product.title}
-                    className="product-image transition-transform duration-500 group-hover:scale-105"
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    loading="lazy"
-                />
-                <div className="product-overlay absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <button className="add-to-cart-btn bg-white text-black px-4 py-2 rounded-full font-bold transform translate-y-4 group-hover:translate-y-0 transition-transform">
-                        {t("add_to_cart")}
-                    </button>
+            <Link to={`/products/${product.handle || '#'}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+                <div className="product-image-container" style={{ position: "relative", overflow: "hidden", background: "#f9f9f9", aspectRatio: "1/1" }}>
+                    <img
+                        src={product.image}
+                        alt={product.title}
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        loading="lazy"
+                    />
                 </div>
-            </div>
-            <div className="product-info mt-3">
-                <h3 className="product-title font-medium text-lg leading-tight line-clamp-2">{product.title}</h3>
-                <p className="product-price text-primary font-bold mt-1 text-xl">{t("price_yen", { price: product.price })}</p>
+                <div style={{ padding: "15px" }}>
+                    <h3 style={{ fontSize: "1rem", fontWeight: "600", marginBottom: "8px", height: "40px", overflow: "hidden", lineHeight: "1.4" }}>{product.title}</h3>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span style={{ fontSize: "1.1rem", fontWeight: "700", color: "var(--color-primary)" }}>
+                            {t("price_yen", { price: product.price })}
+                        </span>
+                        <div style={{ color: "#f5a623", fontSize: "0.9rem" }}>★ {product.rating}</div>
+                    </div>
+                </div>
+            </Link>
+            <div style={{ padding: "0 15px 15px" }}>
+                <button className="btn-primary" style={{ width: "100%", padding: "8px", fontSize: "0.9rem" }}>
+                    {t("add_to_cart", { defaultValue: "Add to Cart" })}
+                </button>
             </div>
         </motion.div>
     );

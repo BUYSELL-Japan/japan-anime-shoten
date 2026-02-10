@@ -1,0 +1,9 @@
+{
+    "title": "日本アニメ書店",
+    "welcome": "日本限定のアニメグッズを世界中にお届けします。",
+    "new_arrivals": "新着商品",
+    "featured_products": "おすすめ商品",
+    "add_to_cart": "カートに追加",
+    "price_yen": "¥{{price}}",
+    "hero_subtitle": "100%正規品保証・世界中へ配送"
+}
