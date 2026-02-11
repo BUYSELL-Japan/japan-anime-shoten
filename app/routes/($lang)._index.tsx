@@ -74,57 +74,16 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
   `;
 
   try {
-    const shopifyData = await shopifyFetch({ query: QUERY, context });
-
-    // Extract all Shopify IDs
-    const allEdges = [...shopifyData.featured.edges, ...shopifyData.newArrivals.edges];
-    const shopifyIds = allEdges.map((e: any) => e.node.id); // e.g., "gid://shopify/Product/..."
-
-    // Fetch Translations from D1
-    let translationsMap: Record<string, { title: string }> = {};
-
-    // Normalize locale for D1 (e.g., zh-CN -> zh_cn)
-    const d1Locale = locale.toLowerCase().replace('-', '_');
-    console.log(`[Loader] Fetching translations for locale: ${d1Locale} (Original: ${locale})`);
-    console.log(`[Loader] Shopify IDs to query (first 3):`, shopifyIds.slice(0, 3));
-
-    if (env.DB && shopifyIds.length > 0) {
-      const placeholders = shopifyIds.map(() => '?').join(',');
-      const stmt = env.DB.prepare(`
-                SELECT p.shopify_product_id, t.title, t.language_code 
-                FROM products p 
-                JOIN product_translations t ON p.id = t.product_id 
-                WHERE p.shopify_product_id IN (${placeholders}) 
-                AND t.language_code = ?
-            `);
-
-      const results = await stmt.bind(...shopifyIds, d1Locale).all();
-
-      console.log(`[Loader] Query executed. Row count: ${results.results?.length}`);
-      if (results.results && results.results.length > 0) {
-        console.log(`[Loader] First result:`, results.results[0]);
-        results.results.forEach((row: any) => {
-          translationsMap[row.shopify_product_id] = { title: row.title };
-        });
-      } else {
-        // Debug: Try querying without language code to see if ANY translations exist for these IDs
-        const debugStmt = env.DB.prepare(`
-             SELECT p.shopify_product_id, t.language_code, t.title
-             FROM products p
-             JOIN product_translations t ON p.id = t.product_id
-             WHERE p.shopify_product_id IN (${placeholders})
-             LIMIT 5
-         `);
-        const debugResults = await debugStmt.bind(...shopifyIds).all();
-        console.log(`[Loader DEBUG] Any translations for these products?`, debugResults.results);
-      }
-    }
+    const shopifyData = await shopifyFetch({
+      query: QUERY,
+      context,
+      language: locale // Pass locale to get translated data from Shopify
+    });
 
     const formatProduct = (node: any) => {
-      const translation = translationsMap[node.id];
       return {
         id: node.id,
-        title: translation?.title || node.title, // Use translation if available
+        title: node.title, // Now contains translated title from Shopify
         handle: node.handle,
         price: parseFloat(node.priceRange.minVariantPrice.amount).toLocaleString(),
         image: node.images.edges[0]?.node.url || "https://placehold.co/400x400?text=No+Image",

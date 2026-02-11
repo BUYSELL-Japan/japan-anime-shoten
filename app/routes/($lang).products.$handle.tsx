@@ -98,49 +98,19 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
     const variables = { handle };
 
     try {
-        const { product } = await shopifyFetch({ query: QUERY, variables, context });
+        const { product } = await shopifyFetch({
+            query: QUERY,
+            variables,
+            context,
+            language: locale // Pass locale to get translated data from Shopify
+        });
 
         if (!product) {
             throw new Response("Not Found", { status: 404 });
         }
 
-        // Fetch Translation from D1
-        let translation = null;
-
-        // Normalize locale for D1 (e.g., zh-CN -> zh_cn)
-        const d1Locale = locale.toLowerCase().replace('-', '_');
-        console.log(`[ProductLoader] Fetching translation for shopify_product_id: ${product.id} in ${d1Locale}`);
-
-        if (env.DB) {
-            const stmt = env.DB.prepare(`
-                SELECT t.title, t.body_html, t.language_code
-                FROM products p
-                JOIN product_translations t ON p.id = t.product_id
-                WHERE p.shopify_product_id = ? AND t.language_code = ?
-            `);
-            const result = await stmt.bind(product.id, d1Locale).first();
-            if (result) {
-                console.log(`[ProductLoader] Translation found: ${result.title}`);
-                translation = result;
-            } else {
-                console.log(`[ProductLoader] No translation found for ${product.id} / ${d1Locale}.`);
-                // Debug: Check if product exists in DB at all
-                const pCheck = await env.DB.prepare("SELECT * FROM products WHERE shopify_product_id = ?").bind(product.id).first();
-                console.log(`[ProductLoader DEBUG] Product in DB?`, pCheck ? "Yes" : "No");
-
-                if (pCheck) {
-                    const tCheck = await env.DB.prepare("SELECT language_code FROM product_translations WHERE product_id = ?").bind(pCheck.id).all();
-                    console.log(`[ProductLoader DEBUG] Available languages:`, tCheck.results);
-                }
-            }
-        }
-
         return json({
-            product: {
-                ...product,
-                title: translation?.title || product.title,
-                descriptionHtml: translation?.body_html || product.descriptionHtml
-            },
+            product, // Contains translated title and description from Shopify
             locale
         });
 

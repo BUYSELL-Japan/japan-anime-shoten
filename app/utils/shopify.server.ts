@@ -65,10 +65,12 @@ export async function shopifyFetch({
     query,
     variables,
     context,
+    language,
 }: {
     query: string;
     variables?: Record<string, any>;
     context: AppLoadContext;
+    language?: string; // Add language parameter (e.g., "EN", "ZH_CN", "JA")
 }) {
     const env = context.cloudflare.env as any;
 
@@ -77,6 +79,24 @@ export async function shopifyFetch({
 
     const endpoint = `https://${domain}/api/2024-01/graphql.json`;
 
+    // Convert language code to Shopify format (e.g., "zh-CN" -> "ZH_CN")
+    let shopifyLanguage = "JA"; // Default to Japanese
+    if (language) {
+        shopifyLanguage = language.toUpperCase().replace("-", "_");
+    }
+
+    // Inject @inContext directive if language is specified
+    let modifiedQuery = query;
+    if (language && !query.includes("@inContext")) {
+        // Insert @inContext after the first query/mutation definition
+        modifiedQuery = query.replace(
+            /(query|mutation)\s+(\w+)(\s*\(.*?\))?\s*{/,
+            `$1 $2$3 @inContext(language: ${shopifyLanguage}) {`
+        );
+    }
+
+    console.log(`[ShopifyFetch] Language: ${shopifyLanguage}, Query modified: ${query !== modifiedQuery}`);
+
     try {
         const response = await fetch(endpoint, {
             method: "POST",
@@ -84,7 +104,7 @@ export async function shopifyFetch({
                 "Content-Type": "application/json",
                 "X-Shopify-Storefront-Access-Token": token,
             },
-            body: JSON.stringify({ query, variables }),
+            body: JSON.stringify({ query: modifiedQuery, variables }),
         });
 
         if (!response.ok) {
