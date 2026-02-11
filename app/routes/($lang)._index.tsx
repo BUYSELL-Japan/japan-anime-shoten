@@ -77,15 +77,34 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
     const shopifyData = await shopifyFetch({
       query: QUERY,
       context,
-      language: locale // Pass locale to get translated data from Shopify
+      language: locale // Pass locale to get translated data and prices from Shopify
     });
 
     const formatProduct = (node: any) => {
+      const currencyCode = node.priceRange.minVariantPrice.currencyCode;
+      const amount = parseFloat(node.priceRange.minVariantPrice.amount);
+
+      // Format price with currency symbol
+      const currencySymbols: Record<string, string> = {
+        'USD': '$',
+        'JPY': '¥',
+        'CNY': '¥',
+        'KRW': '₩',
+        'THB': '฿',
+        'TWD': 'NT$'
+      };
+
+      const symbol = currencySymbols[currencyCode] || currencyCode;
+      const formattedPrice = currencyCode === 'JPY' || currencyCode === 'KRW'
+        ? amount.toLocaleString('ja-JP', { maximumFractionDigits: 0 })
+        : amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
       return {
         id: node.id,
-        title: node.title, // Now contains translated title from Shopify
+        title: node.title, // Contains translated title from Shopify
         handle: node.handle,
-        price: parseFloat(node.priceRange.minVariantPrice.amount).toLocaleString(),
+        price: `${symbol}${formattedPrice}`,
+        currencyCode,
         image: node.images.edges[0]?.node.url || "https://placehold.co/400x400?text=No+Image",
         rating: 5,
       };

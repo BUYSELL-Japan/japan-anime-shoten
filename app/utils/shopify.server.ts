@@ -70,7 +70,7 @@ export async function shopifyFetch({
     query: string;
     variables?: Record<string, any>;
     context: AppLoadContext;
-    language?: string; // Add language parameter (e.g., "EN", "ZH_CN", "JA")
+    language?: string; // e.g., "en", "zh-CN", "ja", "ko"
 }) {
     const env = context.cloudflare.env as any;
 
@@ -79,23 +79,37 @@ export async function shopifyFetch({
 
     const endpoint = `https://${domain}/api/2024-01/graphql.json`;
 
-    // Convert language code to Shopify format (e.g., "zh-CN" -> "ZH_CN")
+    // Convert language code to Shopify format and map to country
     let shopifyLanguage = "JA"; // Default to Japanese
+    let shopifyCountry = "JP"; // Default to Japan
+
     if (language) {
         shopifyLanguage = language.toUpperCase().replace("-", "_");
+
+        // Map language to country for pricing
+        const langToCountry: Record<string, string> = {
+            "EN": "US",
+            "ZH_TW": "TW",
+            "ZH_CN": "CN",
+            "KO": "KR",
+            "TH": "TH",
+            "JA": "JP"
+        };
+
+        shopifyCountry = langToCountry[shopifyLanguage] || "JP";
     }
 
     // Inject @inContext directive if language is specified
     let modifiedQuery = query;
     if (language && !query.includes("@inContext")) {
-        // Insert @inContext after the first query/mutation definition
+        // Insert @inContext with both language and country
         modifiedQuery = query.replace(
             /(query|mutation)\s+(\w+)(\s*\(.*?\))?\s*{/,
-            `$1 $2$3 @inContext(language: ${shopifyLanguage}) {`
+            `$1 $2$3 @inContext(language: ${shopifyLanguage}, country: ${shopifyCountry}) {`
         );
     }
 
-    console.log(`[ShopifyFetch] Language: ${shopifyLanguage}, Query modified: ${query !== modifiedQuery}`);
+    console.log(`[ShopifyFetch] Language: ${shopifyLanguage}, Country: ${shopifyCountry}, Query modified: ${query !== modifiedQuery}`);
 
     try {
         const response = await fetch(endpoint, {

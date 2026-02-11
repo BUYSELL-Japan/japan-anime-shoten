@@ -1,4 +1,4 @@
-import { Link } from "@remix-run/react";
+import { Link, useParams } from "@remix-run/react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
@@ -18,6 +18,8 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, index = 0 }: ProductCardProps) {
     const { t } = useTranslation();
+    const { lang } = useParams();
+    const currentLang = lang || "en";
 
     return (
         <motion.div
@@ -34,7 +36,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
             }}
             whileHover={{ y: -5 }}
         >
-            <Link to={`/products/${product.handle || '#'}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+            <Link to={`/${currentLang}/products/${product.handle || '#'}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
                 <div className="product-image-container" style={{ position: "relative", overflow: "hidden", background: "#f9f9f9", aspectRatio: "1/1" }}>
                     <img
                         src={product.image}
@@ -47,7 +49,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                     <h3 style={{ fontSize: "1rem", fontWeight: "600", marginBottom: "8px", height: "40px", overflow: "hidden", lineHeight: "1.4" }}>{product.title}</h3>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <span style={{ fontSize: "1.1rem", fontWeight: "700", color: "var(--color-primary)" }}>
-                            {t("price_yen", { price: product.price })}
+                            {product.price}
                         </span>
                         <div style={{ color: "#f5a623", fontSize: "0.9rem" }}>★ {product.rating}</div>
                     </div>
