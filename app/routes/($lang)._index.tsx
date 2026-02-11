@@ -24,12 +24,6 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
   const env = context.cloudflare.env as any;
   const locale = params.lang || "en";
 
-  // Fallback if no credentials (e.g. initial dev)
-  if (!env.SHOPIFY_STORE_DOMAIN || !env.SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
-    console.warn("Shopify credentials missing. Using empty data.");
-    return json({ featuredProducts: [], newArrivals: [], locale });
-  }
-
   const QUERY = `
     query HomePage {
       featured: products(first: 8, sortKey: BEST_SELLING) {
@@ -159,6 +153,14 @@ export default function Index() {
       {/* Announcement Bar */}
       <div style={{ background: "var(--color-primary)", color: "white", textAlign: "center", padding: "8px", fontSize: "0.85rem", fontWeight: "600" }}>
         Free Standard Shipping on Orders Over ¥20,000!
+      </div>
+
+      {/* Debug Info - Remove in production */}
+      <div style={{ background: "#333", color: "#0f0", padding: "10px", fontSize: "0.8rem", whiteSpace: "pre-wrap" }}>
+        <strong>DEBUG MODE</strong><br />
+        Route Params Lang: {useLoaderData<typeof loader>().locale}<br />
+        Detected Locale: {useTranslation().i18n.language}<br />
+        Server Translation Check (Search): {useTranslation().t("add_to_cart", { defaultValue: "FAILED" })}<br />
       </div>
 
       <Header />

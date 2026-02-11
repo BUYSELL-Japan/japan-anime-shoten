@@ -14,6 +14,7 @@ import {
 import { useChangeLanguage } from "remix-i18next/react";
 import { useTranslation } from "react-i18next";
 import i18next from "./i18n.server";
+import i18n from "./i18n"; // Add this import for supportedLngs
 
 import styles from "./styles/global.css?url";
 

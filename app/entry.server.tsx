@@ -19,6 +19,9 @@ export default async function handleRequest(
     let lng = await i18next.getLocale(request);
     let ns = i18next.getRouteNamespaces(remixContext);
 
+    const url = new URL(request.url);
+    const origin = url.origin;
+
     await instance
         .use(initReactI18next)
         .use(Backend)
@@ -26,7 +29,9 @@ export default async function handleRequest(
             ...i18n,
             lng,
             ns,
-            backend: { loadPath: "./public/locales/{{lng}}/{{ns}}.json" },
+            backend: {
+                loadPath: `${origin}/locales/{{lng}}/{{ns}}.json`
+            },
         });
 
     const body = await renderToReadableStream(

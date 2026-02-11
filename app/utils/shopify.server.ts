@@ -1,5 +1,66 @@
 import { AppLoadContext } from "@remix-run/cloudflare";
 
+/**
+ * Fetch Shopify credentials from environment variables or D1 database
+ * Priority: Environment variables > D1 database
+ */
+async function getShopifyCredentials(env: any): Promise<{ domain: string; token: string }> {
+    // Try environment variables first (for Cloudflare Pages deployment)
+    if (env.SHOPIFY_STORE_DOMAIN && env.SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
+        console.log("[ShopifyAuth] Using credentials from environment variables");
+        return {
+            domain: env.SHOPIFY_STORE_DOMAIN,
+            token: env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
+        };
+    }
+
+    // Fallback to D1
+    console.log("[ShopifyAuth] Environment variables not found, trying D1...");
+
+    if (!env.DB) {
+        throw new Error("Neither environment variables nor D1 database binding found. Please configure Shopify credentials.");
+    }
+
+    try {
+        const results = await env.DB.prepare(`
+            SELECT key, value 
+            FROM app_settings 
+            WHERE key IN ('shopify_shop_domain', 'shopify_access_token')
+        `).all();
+
+        if (!results.results || results.results.length === 0) {
+            throw new Error("Shopify credentials not found in D1. Please add to app_settings or use environment variables.");
+        }
+
+        const settings: Record<string, string> = {};
+        results.results.forEach((row: any) => {
+            settings[row.key] = row.value;
+        });
+
+        const domain = settings['shopify_shop_domain'];
+        const token = settings['shopify_access_token'];
+
+        if (!domain || !token) {
+            throw new Error(`Missing Shopify credentials in D1. Found: domain=${!!domain}, token=${!!token}`);
+        }
+
+        console.log("[ShopifyAuth] Using credentials from D1");
+        console.log(`[ShopifyAuth] IMPORTANT: Token type = ${token.startsWith('shpat_') ? 'Admin (WRONG for Storefront API!)' : 'Storefront (Correct)'}`);
+
+        if (token.startsWith('shpat_')) {
+            throw new Error(
+                "Admin Access Token detected in D1! Storefront API requires a Storefront Access Token. " +
+                "Please update app_settings with the correct token type (starts with lowercase letters/numbers, not 'shpat_')."
+            );
+        }
+
+        return { domain, token };
+    } catch (error) {
+        console.error("Failed to fetch Shopify credentials from D1:", error);
+        throw error;
+    }
+}
+
 export async function shopifyFetch({
     query,
     variables,
@@ -11,19 +72,17 @@ export async function shopifyFetch({
 }) {
     const env = context.cloudflare.env as any;
 
-    if (!env.SHOPIFY_STORE_DOMAIN || !env.SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
-        console.error("Missing Shopify credentials in environment");
-        throw new Error("Shopify credentials missing. Please set SHOPIFY_STORE_DOMAIN and SHOPIFY_STOREFRONT_ACCESS_TOKEN.");
-    }
+    // Get credentials from environment or D1
+    const { domain, token } = await getShopifyCredentials(env);
 
-    const endpoint = `https://${env.SHOPIFY_STORE_DOMAIN}/api/2024-01/graphql.json`;
+    const endpoint = `https://${domain}/api/2024-01/graphql.json`;
 
     try {
         const response = await fetch(endpoint, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "X-Shopify-Storefront-Access-Token": env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,
+                "X-Shopify-Storefront-Access-Token": token,
             },
             body: JSON.stringify({ query, variables }),
         });
