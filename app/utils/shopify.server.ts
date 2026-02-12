@@ -119,6 +119,7 @@ export async function shopifyFetch({
                 "X-Shopify-Storefront-Access-Token": token,
             },
             body: JSON.stringify({ query: modifiedQuery, variables }),
+            cache: "no-store", // Ensure fresh data
         });
 
         if (!response.ok) {

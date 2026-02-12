@@ -95,9 +95,15 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
       };
 
       const symbol = currencySymbols[currencyCode] || currencyCode;
-      const formattedPrice = currencyCode === 'JPY' || currencyCode === 'KRW'
-        ? amount.toLocaleString('ja-JP', { maximumFractionDigits: 0 })
-        : amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      // Formatting logic based on currency
+      let formattedPrice = '';
+      if (['JPY', 'KRW', 'TWD', 'THB', 'CNY'].includes(currencyCode)) {
+        // Currencies that typically don't use decimals or have specific formatting
+        formattedPrice = amount.toLocaleString('ja-JP', { maximumFractionDigits: 0 });
+      } else {
+        formattedPrice = amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      }
 
       return {
         id: node.id,
