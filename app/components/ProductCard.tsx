@@ -48,7 +48,8 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                 <div style={{ padding: "15px" }}>
                     <h3 style={{ fontSize: "1rem", fontWeight: "600", marginBottom: "8px", height: "40px", overflow: "hidden", lineHeight: "1.4" }}>{product.title}</h3>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <span style={{ fontSize: "1.1rem", fontWeight: "700", color: "var(--color-primary)" }}>
+                        {/* Suppress hydration warning for price as it might differ between server (formatted) and client */}
+                        <span suppressHydrationWarning style={{ fontSize: "1.1rem", fontWeight: "700", color: "var(--color-primary)" }}>
                             {product.price}
                         </span>
                         <div style={{ color: "#f5a623", fontSize: "0.9rem" }}>★ {product.rating}</div>
