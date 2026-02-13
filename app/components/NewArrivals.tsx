@@ -1,5 +1,4 @@
 import { useRef } from 'react';
-import { useRef } from 'react';
 // import { motion, useScroll, useTransform } from 'framer-motion'; // Removed for hydration stability
 import ProductCard from "./ProductCard";
 import { useTranslation } from "react-i18next";
@@ -9,6 +8,7 @@ interface Product {
     title: string;
     price: string;
     image: string;
+    rating: number; // Added missing property
 }
 
 interface NewArrivalsProps {
