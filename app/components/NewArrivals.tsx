@@ -1,5 +1,6 @@
 import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef } from 'react';
+// import { motion, useScroll, useTransform } from 'framer-motion'; // Removed for hydration stability
 import ProductCard from "./ProductCard";
 import { useTranslation } from "react-i18next";
 
@@ -17,7 +18,7 @@ interface NewArrivalsProps {
 export default function NewArrivals({ products }: NewArrivalsProps) {
     const { t } = useTranslation();
     const scrollRef = useRef<HTMLDivElement>(null);
-    const { scrollXProgress } = useScroll({ container: scrollRef });
+    // const { scrollXProgress } = useScroll({ container: scrollRef }); // Removed
 
     if (!products || products.length === 0) {
         return null;

@@ -22,19 +22,17 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
     const currentLang = lang || "en";
 
     return (
-        <motion.div
+    return (
+        <div
             className="product-card group"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
             style={{
                 background: "#fff",
                 border: "1px solid #eee",
                 borderRadius: "8px",
                 overflow: "hidden",
-                position: "relative"
+                position: "relative",
+                transition: "transform 0.3s ease",
             }}
-            whileHover={{ y: -5 }}
         >
             <Link to={`/${currentLang}/products/${product.handle || '#'}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
                 <div className="product-image-container" style={{ position: "relative", overflow: "hidden", background: "#f9f9f9", aspectRatio: "1/1" }}>
@@ -61,6 +59,6 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                     {t("add_to_cart", { defaultValue: "Add to Cart" })}
                 </button>
             </div>
-        </motion.div>
+        </div>
     );
 }
