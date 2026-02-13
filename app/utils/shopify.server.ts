@@ -120,21 +120,22 @@ export async function shopifyFetch({
             },
             body: JSON.stringify({ query: modifiedQuery, variables }),
             // cache: "no-store", // Removed: Cloudflare Workers fetch does not support 'cache' option
+        });
 
-            if(!response.ok) {
-                const text = await response.text();
-        throw new Error(`Shopify API error: ${response.status} ${response.statusText} - ${text}`);
-    }
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(`Shopify API error: ${response.status} ${response.statusText} - ${text}`);
+        }
 
         const json = await response.json();
 
-    if (json.errors) {
-        throw new Error(`Shopify GraphQL errors: ${JSON.stringify(json.errors)}`);
-    }
+        if (json.errors) {
+            throw new Error(`Shopify GraphQL errors: ${JSON.stringify(json.errors)}`);
+        }
 
-    return json.data;
-} catch (error) {
-    console.error("Shopify Fetch Error:", error);
-    throw error;
-}
+        return json.data;
+    } catch (error) {
+        console.error("Shopify Fetch Error:", error);
+        throw error;
+    }
 }
