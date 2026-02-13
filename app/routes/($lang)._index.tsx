@@ -80,6 +80,8 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
       language: locale // Pass locale to get translated data and prices from Shopify
     });
 
+    console.log(`[Loader] Raw Shopify Data:`, JSON.stringify(shopifyData, null, 2));
+
     console.log(`[Loader] Fetched ${shopifyData.featured.edges.length} featured products`);
     console.log(`[Loader] Fetched ${shopifyData.newArrivals.edges.length} new arrivals`);
 
