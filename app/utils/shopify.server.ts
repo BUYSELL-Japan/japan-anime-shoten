@@ -7,7 +7,7 @@ import { AppLoadContext } from "@remix-run/cloudflare";
 async function getShopifyCredentials(env: any): Promise<{ domain: string; token: string }> {
     // Try environment variables first (for Cloudflare Pages deployment)
     if (env.SHOPIFY_STORE_DOMAIN && env.SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
-        console.log("[ShopifyAuth] Using credentials from environment variables");
+        console.log(`[ShopifyAuth] Using credentials from environment variables: Domain=${env.SHOPIFY_STORE_DOMAIN}, Token=${env.SHOPIFY_STOREFRONT_ACCESS_TOKEN.slice(0, 5)}...`);
         return {
             domain: env.SHOPIFY_STORE_DOMAIN,
             token: env.SHOPIFY_STOREFRONT_ACCESS_TOKEN

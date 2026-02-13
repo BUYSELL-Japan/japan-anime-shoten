@@ -154,10 +154,19 @@ export default function Index() {
         Free Standard Shipping on Orders Over ¥20,000!
       </div>
 
-      {/* Debug Info - Remove in production */}
-      <div style={{ background: "#333", color: "#0f0", padding: "10px", fontSize: "0.8rem", whiteSpace: "pre-wrap" }}>
-        <strong>DEBUG MODE</strong><br />
-        Route Params Lang: {useLoaderData<typeof loader>().locale}<br />
+      {/* Always show Debug Info for now */}
+      <div style={{ padding: "20px", background: "#ffe", border: "2px solid red", margin: "20px", borderRadius: "8px", zIndex: 9999, position: "relative" }}>
+        <h3 style={{color: "red", fontWeight: "bold"}}>⚠️ DEBUG DASHBOARD</h3>
+        <p><strong>Locale:</strong> {useLoaderData<typeof loader>().locale}</p>
+        <p><strong>Featured Count:</strong> {featuredProducts?.length || 0}</p>
+        <p><strong>New Arrivals Count:</strong> {newArrivals?.length || 0}</p>
+        <details>
+            <summary>Raw Data Sample (First Item)</summary>
+            <pre style={{fontSize: "10px", maxHeight: "200px", overflow: "auto"}}>
+                {JSON.stringify(featuredProducts?.[0] || newArrivals?.[0] || "No Data", null, 2)}
+            </pre>
+        </details>
+      </div>
         Detected Locale: {useTranslation().i18n.language}<br />
         Server Translation Check (Search): {useTranslation().t("add_to_cart", { defaultValue: "FAILED" })}<br />
       </div>
@@ -173,6 +182,6 @@ export default function Index() {
       </main>
 
       <Footer />
-    </div>
+    </div >
   );
 }
