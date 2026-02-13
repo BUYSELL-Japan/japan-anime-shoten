@@ -70,7 +70,7 @@ export default function App() {
     useChangeLanguage(locale);
 
     return (
-        <html lang={locale} dir={i18n.dir()}>
+        <html lang={locale} dir={i18n.dir()} suppressHydrationWarning>
             <head>
                 <meta charSet="utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
