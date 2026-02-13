@@ -6,5 +6,9 @@
     "add_to_cart": "Add to Cart",
     "price_yen": "¥{{price}}",
     "search_placeholder": "Search products...",
-    "hero_subtitle": "Delivering authentic products sourced directly from authorized channels, from rare figures to the latest merchandise."
+    "hero_subtitle": "Delivering authentic products sourced directly from authorized channels, from rare figures to the latest merchandise.",
+    "hero_title_1": "Latest Figures",
+    "hero_subtitle_1": "Fresh arrivals of the hottest anime figures.",
+    "hero_title_2": "Rare Collectibles",
+    "hero_subtitle_2": "We stock hard-to-find limited editions and rare merchandise."
 }

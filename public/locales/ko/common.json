@@ -6,5 +6,9 @@
     "add_to_cart": "장바구니 담기",
     "price_yen": "¥{{price}}",
     "search_placeholder": "상품 검색...",
-    "hero_subtitle": "희귀 피규어부터 최신 굿즈까지, 정식 루트로 입수한 정품만을 배송합니다."
+    "hero_subtitle": "희귀 피규어부터 최신 굿즈까지, 정식 루트로 입수한 정품만을 배송합니다.",
+    "hero_title_1": "최신 피규어",
+    "hero_subtitle_1": "인기 애니메이션의 최신 피규어가 입고되었습니다.",
+    "hero_title_2": "희귀 소장품",
+    "hero_subtitle_2": "구하기 힘든 한정판 및 희귀 굿즈를 취급합니다."
 }

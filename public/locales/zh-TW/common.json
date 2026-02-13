@@ -6,5 +6,9 @@
     "add_to_cart": "加入購物車",
     "price_yen": "¥{{price}}",
     "search_placeholder": "搜尋商品...",
-    "hero_subtitle": "從稀有手辦到最新周邊，我們提供正規渠道採購的正品。"
+    "hero_subtitle": "從稀有手辦到最新周邊，我們提供正規渠道採購的正品。",
+    "hero_title_1": "最新手辦",
+    "hero_subtitle_1": "熱門動漫的最新手辦已到貨。",
+    "hero_title_2": "稀有收藏品",
+    "hero_subtitle_2": "我們搜羅難以入手的限定商品和稀有周邊。"
 }
