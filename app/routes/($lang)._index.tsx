@@ -80,6 +80,13 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
       language: locale // Pass locale to get translated data and prices from Shopify
     });
 
+    console.log(`[Loader] Fetched ${shopifyData.featured.edges.length} featured products`);
+    console.log(`[Loader] Fetched ${shopifyData.newArrivals.edges.length} new arrivals`);
+
+    if (shopifyData.newArrivals.edges.length > 0) {
+      console.log(`[Loader] First new arrival:`, JSON.stringify(shopifyData.newArrivals.edges[0].node, null, 2));
+    }
+
     const formatProduct = (node: any) => {
       const currencyCode = node.priceRange.minVariantPrice.currencyCode;
       const amount = parseFloat(node.priceRange.minVariantPrice.amount);
