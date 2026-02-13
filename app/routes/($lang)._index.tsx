@@ -131,13 +131,13 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
     return json({ featuredProducts, newArrivals, locale });
   } catch (error) {
     console.error("Loader Error:", error);
+    let errorMessage = "Unknown Error";
     if (error instanceof Error) {
-      console.error("Error Message:", error.message);
-      console.error("Error Stack:", error.stack);
+      errorMessage = error.message + "\n" + error.stack;
     } else {
-      console.error("Unknown Error:", JSON.stringify(error, null, 2));
+      errorMessage = JSON.stringify(error, null, 2);
     }
-    return json({ featuredProducts: [], newArrivals: [], locale });
+    return json({ featuredProducts: [], newArrivals: [], locale, error: errorMessage });
   }
 }
 
