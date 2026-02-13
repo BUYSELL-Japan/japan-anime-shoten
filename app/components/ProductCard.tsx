@@ -1,5 +1,5 @@
 import { Link, useParams } from "@remix-run/react";
-import { motion } from "framer-motion";
+// import { motion } from "framer-motion"; // Removed for hydration stability
 import { useTranslation } from "react-i18next";
 
 export interface Product {
@@ -21,7 +21,6 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
     const { lang } = useParams();
     const currentLang = lang || "en";
 
-    return (
     return (
         <div
             className="product-card group"
