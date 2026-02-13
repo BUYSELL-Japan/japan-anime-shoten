@@ -145,7 +145,7 @@ import Header from "~/components/Header";
 import Footer from "~/components/Footer";
 
 export default function Index() {
-  const { featuredProducts, newArrivals } = useLoaderData<typeof loader>();
+  const { featuredProducts, newArrivals, error } = useLoaderData<typeof loader>();
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -157,6 +157,12 @@ export default function Index() {
       {/* Always show Debug Info for now */}
       <div style={{ padding: "20px", background: "#ffe", border: "2px solid red", margin: "20px", borderRadius: "8px", zIndex: 9999, position: "relative" }}>
         <h3 style={{ color: "red", fontWeight: "bold" }}>⚠️ DEBUG DASHBOARD</h3>
+        {error && (
+          <div style={{ backgroundColor: "#fee", color: "red", padding: "10px", marginBottom: "10px", border: "1px solid red" }}>
+            <strong>CRITICAL LOADER ERROR:</strong>
+            <pre style={{ whiteSpace: "pre-wrap", fontSize: "11px" }}>{error}</pre>
+          </div>
+        )}
         <p><strong>Locale:</strong> {useLoaderData<typeof loader>().locale}</p>
         <p><strong>Featured Count:</strong> {featuredProducts?.length || 0}</p>
         <p><strong>New Arrivals Count:</strong> {newArrivals?.length || 0}</p>
