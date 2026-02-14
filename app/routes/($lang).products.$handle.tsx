@@ -146,15 +146,21 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
   }
 }
 
+import { useState } from "react";
+
 export default function ProductDetail() {
-  const { product, displayPrice } = useLoaderData<typeof loader>(); // Receive displayPrice
+  const { product, displayPrice } = useLoaderData<typeof loader>();
   const { t } = useTranslation();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
-  // Use pre-formatted price from loader
+  // State for the currently selected main image
+  // Default to the first image or a placeholder
+  const [mainImage, setMainImage] = useState(
+    product.images.edges[0]?.node.url || "https://placehold.co/600x600?text=No+Image"
+  );
+
   const price = displayPrice;
-  const currency = product.priceRange.minVariantPrice.currencyCode; // Still available for logic if needed
   const variantId = product.variants.edges[0]?.node.id;
 
   return (
@@ -167,18 +173,25 @@ export default function ProductDetail() {
           <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
             <div style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid #eee" }}>
               <img
-                src={product.images.edges[0]?.node.url || "https://placehold.co/600x600?text=No+Image"}
+                src={mainImage}
                 alt={product.title}
                 style={{ width: "100%", height: "auto", objectFit: "cover", display: "block" }}
               />
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px" }}>
-              {product.images.edges.slice(1).map((edge: any, i: number) => (
+              {product.images.edges.map((edge: any, i: number) => (
                 <img
                   key={i}
                   src={edge.node.url}
-                  alt="Product thumbnail"
-                  style={{ width: "100%", borderRadius: "4px", border: "1px solid #eee", cursor: "pointer" }}
+                  alt={`Product thumbnail ${i + 1}`}
+                  onClick={() => setMainImage(edge.node.url)}
+                  style={{
+                    width: "100%",
+                    borderRadius: "4px",
+                    border: mainImage === edge.node.url ? "2px solid var(--color-primary)" : "1px solid #eee",
+                    cursor: "pointer",
+                    opacity: mainImage === edge.node.url ? 0.8 : 1
+                  }}
                 />
               ))}
             </div>

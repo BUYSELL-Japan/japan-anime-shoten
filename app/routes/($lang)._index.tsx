@@ -131,13 +131,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
     return json({ featuredProducts, newArrivals, locale });
   } catch (error) {
     console.error("Loader Error:", error);
-    let errorMessage = "Unknown Error";
-    if (error instanceof Error) {
-      errorMessage = error.message + "\n" + error.stack;
-    } else {
-      errorMessage = JSON.stringify(error, null, 2);
-    }
-    return json({ featuredProducts: [], newArrivals: [], locale, error: errorMessage });
+    return json({ featuredProducts: [], newArrivals: [], locale });
   }
 }
 
@@ -145,33 +139,13 @@ import Header from "~/components/Header";
 import Footer from "~/components/Footer";
 
 export default function Index() {
-  const { featuredProducts, newArrivals, error } = useLoaderData<typeof loader>();
+  const { featuredProducts, newArrivals } = useLoaderData<typeof loader>();
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       {/* Announcement Bar */}
       <div style={{ background: "var(--color-primary)", color: "white", textAlign: "center", padding: "8px", fontSize: "0.85rem", fontWeight: "600" }}>
         Free Standard Shipping on Orders Over ¥20,000!
-      </div>
-
-      {/* Always show Debug Info for now */}
-      <div style={{ padding: "20px", background: "#ffe", border: "2px solid red", margin: "20px", borderRadius: "8px", zIndex: 9999, position: "relative" }}>
-        <h3 style={{ color: "red", fontWeight: "bold" }}>⚠️ DEBUG DASHBOARD</h3>
-        {error && (
-          <div style={{ backgroundColor: "#fee", color: "red", padding: "10px", marginBottom: "10px", border: "1px solid red" }}>
-            <strong>CRITICAL LOADER ERROR:</strong>
-            <pre style={{ whiteSpace: "pre-wrap", fontSize: "11px" }}>{error}</pre>
-          </div>
-        )}
-        <p><strong>Locale:</strong> {useLoaderData<typeof loader>().locale}</p>
-        <p><strong>Featured Count:</strong> {featuredProducts?.length || 0}</p>
-        <p><strong>New Arrivals Count:</strong> {newArrivals?.length || 0}</p>
-        <details>
-          <summary>Raw Data Sample (First Item)</summary>
-          <pre style={{ fontSize: "10px", maxHeight: "200px", overflow: "auto" }}>
-            {JSON.stringify(featuredProducts?.[0] || newArrivals?.[0] || "No Data", null, 2)}
-          </pre>
-        </details>
       </div>
 
       <Header />

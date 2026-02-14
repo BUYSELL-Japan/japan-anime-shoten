@@ -1,9 +1,13 @@
+import { useTranslation } from "react-i18next";
+
 export default function TrustBadges() {
+    const { t } = useTranslation();
+
     const badges = [
-        { icon: "✈️", title: "Worldwide Shipping", desc: "Tracked & Insured" },
-        { icon: "💎", title: "100% Authentic", desc: "Guaranteed Genuine" },
-        { icon: "🔒", title: "Secure Payment", desc: "256-bit SSL Encryption" },
-        { icon: "💬", title: "Support 24/7", desc: "Dedicated Team" },
+        { icon: "✈️", title: t("badge_shipping_title"), desc: t("badge_shipping_desc") },
+        { icon: "💎", title: t("badge_authentic_title"), desc: t("badge_authentic_desc") },
+        { icon: "🔒", title: t("badge_secure_title"), desc: t("badge_secure_desc") },
+        { icon: "💬", title: t("badge_support_title"), desc: t("badge_support_desc") },
     ];
 
     return (
