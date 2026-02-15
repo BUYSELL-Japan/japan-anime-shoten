@@ -140,6 +140,7 @@ import Footer from "~/components/Footer";
 
 export default function Index() {
   const { featuredProducts, newArrivals } = useLoaderData<typeof loader>();
+  const { t } = useTranslation();
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
