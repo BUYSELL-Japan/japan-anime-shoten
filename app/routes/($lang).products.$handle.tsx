@@ -170,29 +170,39 @@ export default function ProductDetail() {
       <main className="container" style={{ padding: "40px 20px", flex: 1 }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "40px" }}>
           {/* Images */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            <div style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid #eee" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid #eee", background: "#fff", display: "flex", justifyContent: "center", alignItems: "center", maxHeight: "500px" }}>
               <img
                 src={mainImage}
                 alt={product.title}
-                style={{ width: "100%", height: "auto", objectFit: "cover", display: "block" }}
+                style={{ maxWidth: "100%", maxHeight: "500px", width: "auto", height: "auto", objectFit: "contain", display: "block" }}
               />
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(60px, 1fr))", gap: "10px" }}>
               {product.images.edges.map((edge: any, i: number) => (
-                <img
+                <div
                   key={i}
-                  src={edge.node.url}
-                  alt={`Product thumbnail ${i + 1}`}
-                  onClick={() => setMainImage(edge.node.url)}
                   style={{
-                    width: "100%",
                     borderRadius: "4px",
+                    overflow: "hidden",
                     border: mainImage === edge.node.url ? "2px solid var(--color-primary)" : "1px solid #eee",
                     cursor: "pointer",
-                    opacity: mainImage === edge.node.url ? 0.8 : 1
+                    opacity: mainImage === edge.node.url ? 1 : 0.7,
+                    aspectRatio: "1/1"
                   }}
-                />
+                  onClick={() => setMainImage(edge.node.url)}
+                >
+                  <img
+                    src={edge.node.url}
+                    alt={`Product thumbnail ${i + 1}`}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      display: "block"
+                    }}
+                  />
+                </div>
               ))}
             </div>
           </div>

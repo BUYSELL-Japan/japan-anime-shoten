@@ -23,14 +23,14 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
 
     return (
         <div
-            className="product-card group"
+            className="product-card animate-entry"
             style={{
                 background: "#fff",
                 border: "1px solid #eee",
                 borderRadius: "8px",
                 overflow: "hidden",
                 position: "relative",
-                transition: "transform 0.3s ease",
+                animationDelay: `${index * 50}ms` // Staggered entry
             }}
         >
             <Link to={`/${currentLang}/products/${product.handle || '#'}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
@@ -38,7 +38,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                     <img
                         src={product.image}
                         alt={product.title}
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                         loading="lazy"
                     />
                 </div>
