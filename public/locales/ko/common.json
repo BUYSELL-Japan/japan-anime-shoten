@@ -22,6 +22,9 @@
     "badge_authentic_desc": "정품 보장",
     "badge_secure_title": "안전한 결제",
     "badge_secure_desc": "256비트 SSL 암호화",
-    "badge_support_title": "24/7 지원",
-    "badge_support_desc": "전담 팀 지원"
+    "badge_support_title": "全 상품 추적 가능",
+    "badge_support_desc": "배송 상황 상시 확인",
+    "announcement_shipping": "일반 배송 무료!",
+    "text_free_shipping": "일반 배송 무료",
+    "text_auth_guarantee": "100% 정품 보증"
 }

@@ -22,6 +22,9 @@
     "badge_authentic_desc": "本物をお届け",
     "badge_secure_title": "安全な決済",
     "badge_secure_desc": "256ビットSSL暗号化",
-    "badge_support_title": "24時間年中無休サポート",
-    "badge_support_desc": "専任チーム対応"
+    "badge_support_title": "全商品追跡可能",
+    "badge_support_desc": "安心の配送状況確認",
+    "announcement_shipping": "通常配送無料！",
+    "text_free_shipping": "通常配送無料",
+    "text_auth_guarantee": "100% 正規品保証"
 }

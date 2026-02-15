@@ -1,6 +1,6 @@
 import { Link, useParams } from "@remix-run/react";
-// import { motion } from "framer-motion"; // Removed for hydration stability
 import { useTranslation } from "react-i18next";
+import { useEffect, useRef, useState } from "react";
 
 export interface Product {
     id: string;
@@ -21,16 +21,43 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
     const { lang } = useParams();
     const currentLang = lang || "en";
 
+    // Scroll Animation Logic
+    const cardRef = useRef<HTMLDivElement>(null);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.disconnect(); // Run once
+                }
+            },
+            {
+                threshold: 0.1, // Trigger when 10% visible
+                rootMargin: "50px" // Trigger slightly before it enters content area
+            }
+        );
+
+        if (cardRef.current) {
+            observer.observe(cardRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, []);
+
     return (
         <div
-            className="product-card animate-entry"
+            ref={cardRef}
+            className={`product-card ${isVisible ? "animate-entry" : ""}`}
             style={{
                 background: "#fff",
                 border: "1px solid #eee",
                 borderRadius: "8px",
                 overflow: "hidden",
                 position: "relative",
-                animationDelay: `${index * 50}ms` // Staggered entry
+                opacity: 0, // Start invisible
+                animationDelay: isVisible ? `${(index % 4) * 100}ms` : "0ms" // Stagger based on column position approx
             }}
         >
             <Link to={`/${currentLang}/products/${product.handle || '#'}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>

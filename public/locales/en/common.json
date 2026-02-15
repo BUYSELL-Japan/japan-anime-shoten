@@ -22,6 +22,9 @@
     "badge_authentic_desc": "Guaranteed Genuine",
     "badge_secure_title": "Secure Payment",
     "badge_secure_desc": "256-bit SSL Encryption",
-    "badge_support_title": "Support 24/7",
-    "badge_support_desc": "Dedicated Team"
+    "badge_support_title": "All Items Tracked",
+    "badge_support_desc": "Stay Updated on Delivery",
+    "announcement_shipping": "Free Standard Shipping!",
+    "text_free_shipping": "Free Standard Shipping",
+    "text_auth_guarantee": "100% Authentic Guarantee"
 }

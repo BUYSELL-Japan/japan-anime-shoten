@@ -21,6 +21,9 @@
     "badge_authentic_desc": "保证原装正版",
     "badge_secure_title": "安全支付",
     "badge_secure_desc": "256位 SSL 加密",
-    "badge_support_title": "全天候支持",
-    "badge_support_desc": "专业团队服务"
+    "badge_support_title": "所有商品均可追踪",
+    "badge_support_desc": "随时掌握物流动态",
+    "announcement_shipping": "标准配送免费！",
+    "text_free_shipping": "标准配送免费",
+    "text_auth_guarantee": "100% 正品保证"
 }

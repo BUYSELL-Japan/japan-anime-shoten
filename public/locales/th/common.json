@@ -21,6 +21,9 @@
     "badge_authentic_desc": "รับประกันของแท้",
     "badge_secure_title": "การชำระเงินที่ปลอดภัย",
     "badge_secure_desc": "การเข้ารหัส SSL 256 บิต",
-    "badge_support_title": "บริการช่วยเหลือ 24/7",
-    "badge_support_desc": "ทีมงานมืออาชีพ"
+    "badge_support_title": "ติดตามสินค้าได้ทุกชิ้น",
+    "badge_support_desc": "ตรวจสอบสถานะการจัดส่งได้เสมอ",
+    "announcement_shipping": "จัดส่งแบบธรรมดาฟรี!",
+    "text_free_shipping": "จัดส่งแบบธรรมดาฟรี",
+    "text_auth_guarantee": "รับประกันของแท้ 100%"
 }

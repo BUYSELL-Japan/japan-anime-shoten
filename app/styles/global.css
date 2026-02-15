@@ -123,7 +123,7 @@ button {
 @keyframes slide-up-fade {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(40px);
   }
 
   to {
@@ -133,14 +133,14 @@ button {
 }
 
 .animate-entry {
-  animation: slide-up-fade 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-  opacity: 0;
-  /* Start hidden until animation runs */
+  /* Slowed down from 0.8s to 1.2s for a more "scrolling with user" feel */
+  animation: slide-up-fade 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  /* Opacity handled by keyframes, but ensure it stays visible */
 }
 
 /* Base card transition */
 .product-card {
-  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
   will-change: transform, box-shadow;
 }
 

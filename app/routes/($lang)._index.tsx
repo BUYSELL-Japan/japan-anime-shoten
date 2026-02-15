@@ -145,7 +145,7 @@ export default function Index() {
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       {/* Announcement Bar */}
       <div style={{ background: "var(--color-primary)", color: "white", textAlign: "center", padding: "8px", fontSize: "0.85rem", fontWeight: "600" }}>
-        Free Standard Shipping on Orders Over ¥20,000!
+        {t("announcement_shipping")}
       </div>
 
       <Header />
