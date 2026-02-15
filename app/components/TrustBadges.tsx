@@ -7,7 +7,7 @@ export default function TrustBadges() {
         { icon: "✈️", title: t("badge_shipping_title"), desc: t("badge_shipping_desc") },
         { icon: "💎", title: t("badge_authentic_title"), desc: t("badge_authentic_desc") },
         { icon: "🔒", title: t("badge_secure_title"), desc: t("badge_secure_desc") },
-        { icon: "💬", title: t("badge_support_title"), desc: t("badge_support_desc") },
+        { icon: "📦", title: t("badge_support_title"), desc: t("badge_support_desc") },
     ];
 
     return (

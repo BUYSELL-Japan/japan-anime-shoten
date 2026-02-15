@@ -171,11 +171,11 @@ export default function ProductDetail() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "40px" }}>
           {/* Images */}
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            <div style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid #eee", background: "#fff", display: "flex", justifyContent: "center", alignItems: "center", maxHeight: "700px" }}>
+            <div style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid #eee", background: "#fff", display: "flex", justifyContent: "center", alignItems: "center", height: "600px", width: "100%" }}>
               <img
                 src={mainImage}
                 alt={product.title}
-                style={{ maxWidth: "100%", maxHeight: "700px", width: "auto", height: "auto", objectFit: "contain", display: "block" }}
+                style={{ maxWidth: "100%", maxHeight: "100%", width: "auto", height: "auto", objectFit: "contain", display: "block" }}
               />
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(60px, 1fr))", gap: "10px" }}>
