@@ -13,6 +13,9 @@ export default function Header({ currentCurrency }: { currentCurrency?: string }
     const changeLanguage = (newLang: string) => {
         let newPath = location.pathname;
 
+        // Save language preference to cookie
+        document.cookie = `preferred_language=${newLang}; path=/; max-age=31536000`;
+
         // Simple logic: if path starts with /currentLang, replace it. 
         // If not (e.g. root /), check if it starts with any supported lang? 
         // Or just assume if lang param is present, it's in the URL.

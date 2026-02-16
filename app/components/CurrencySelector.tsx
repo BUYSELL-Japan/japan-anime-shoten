@@ -51,22 +51,22 @@ export default function CurrencySelector({ currentCurrency }: { currentCurrency:
                     alignItems: 'center',
                     gap: '8px',
                     padding: '8px 12px',
-                    background: 'transparent',
-                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    background: '#f5f5f5',
+                    border: '1px solid #ddd',
                     borderRadius: '6px',
                     cursor: 'pointer',
-                    color: 'white',
+                    color: '#333',
                     fontSize: '14px',
-                    fontWeight: '500',
+                    fontWeight: '600',
                     transition: 'all 0.2s ease',
                 }}
                 onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+                    e.currentTarget.style.background = '#e8e8e8';
+                    e.currentTarget.style.borderColor = '#999';
                 }}
                 onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                    e.currentTarget.style.background = '#f5f5f5';
+                    e.currentTarget.style.borderColor = '#ddd';
                 }}
             >
                 <span>{currentCurrencyObj.symbol}</span>
@@ -95,12 +95,12 @@ export default function CurrencySelector({ currentCurrency }: { currentCurrency:
                             style={{
                                 width: '100%',
                                 padding: '12px 16px',
-                                textAlign: 'left',
+                                textAlign: 'center',
                                 background: currency.code === currentCurrency ? '#f5f5f5' : 'white',
                                 border: 'none',
                                 cursor: 'pointer',
                                 display: 'flex',
-                                justifyContent: 'space-between',
+                                justifyContent: 'center',
                                 alignItems: 'center',
                                 fontSize: '14px',
                                 color: '#333',
@@ -117,8 +117,7 @@ export default function CurrencySelector({ currentCurrency }: { currentCurrency:
                                 }
                             }}
                         >
-                            <span>{currency.name}</span>
-                            <span style={{ fontWeight: '600', color: '#666' }}>
+                            <span style={{ fontWeight: '600', color: '#333' }}>
                                 {currency.symbol} {currency.code}
                             </span>
                         </button>
