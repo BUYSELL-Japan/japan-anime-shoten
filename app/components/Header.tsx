@@ -1,7 +1,8 @@
 import { Form, Link, useLocation, useParams, useNavigate } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
+import CurrencySelector from "./CurrencySelector";
 
-export default function Header() {
+export default function Header({ currentCurrency }: { currentCurrency?: string }) {
     const { t } = useTranslation();
     const { lang } = useParams();
     const location = useLocation();
@@ -72,6 +73,7 @@ export default function Header() {
 
                 {/* Actions */}
                 <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+                    {/* Language Selector */}
                     <select
                         name="lng"
                         value={currentLang}
@@ -84,6 +86,10 @@ export default function Header() {
                         <option value="ko">한국어</option>
                         <option value="th">ไทย</option>
                     </select>
+
+                    {/* Currency Selector */}
+                    <CurrencySelector currentCurrency={currentCurrency || 'JPY'} />
+
                     <button style={{ fontWeight: "600", border: "none", background: "none", cursor: "pointer" }}>Search</button>
                     <button className="btn-primary" style={{ padding: "8px 16px", fontSize: "0.9rem" }}>Cart (0)</button>
                 </div>

@@ -66,11 +66,13 @@ export async function shopifyFetch({
     variables,
     context,
     language,
+    country,
 }: {
     query: string;
     variables?: Record<string, any>;
     context: AppLoadContext;
     language?: string; // e.g., "en", "zh-CN", "ja", "ko"
+    country?: string; // e.g., "TW", "CN", "KR", "TH", "US"
 }) {
     const env = context.cloudflare.env as any;
 
@@ -79,14 +81,20 @@ export async function shopifyFetch({
 
     const endpoint = `https://${domain}/api/2024-01/graphql.json`;
 
-    // Convert language code to Shopify format and map to country
+    // Convert language code to Shopify format
     let shopifyLanguage = "JA"; // Default to Japanese
     let shopifyCountry = "JP"; // Default to Japan
 
     if (language) {
         shopifyLanguage = language.toUpperCase().replace("-", "_");
+    }
 
-        // Map language to country for pricing
+    // Prioritize explicit country parameter over language-based inference
+    if (country) {
+        shopifyCountry = country;
+        console.log(`[ShopifyFetch] Using explicit country: ${shopifyCountry}`);
+    } else if (language) {
+        // Map language to country for pricing (fallback)
         const langToCountry: Record<string, string> = {
             "EN": "US",
             "ZH_TW": "TW",
@@ -97,6 +105,7 @@ export async function shopifyFetch({
         };
 
         shopifyCountry = langToCountry[shopifyLanguage] || "JP";
+        console.log(`[ShopifyFetch] Inferred country from language: ${shopifyCountry}`);
     }
 
     // Inject @inContext directive if language is specified

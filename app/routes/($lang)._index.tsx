@@ -24,6 +24,65 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
   const env = context.cloudflare.env as any;
   const locale = params.lang || "en";
 
+  // Parse cookies
+  const cookieHeader = request.headers.get("Cookie");
+  const cookies = cookieHeader?.split(';').reduce((acc, cookie) => {
+    const [key, value] = cookie.trim().split('=');
+    acc[key] = value;
+    return acc;
+  }, {} as Record<string, string>) || {};
+
+  const preferredCurrency = cookies['preferred_currency'];
+
+  // Map country to currency
+  const countryToCurrency: Record<string, string> = {
+    "TW": "TWD",
+    "CN": "CNY",
+    "KR": "KRW",
+    "TH": "THB",
+    "US": "USD",
+    "GB": "GBP",
+    "CA": "CAD",
+    "DE": "EUR",
+    "FR": "EUR",
+    "IT": "EUR",
+    "ES": "EUR",
+    "NL": "EUR",
+    "BE": "EUR",
+    "AT": "EUR",
+    "JP": "JPY"
+  };
+
+  // Reverse mapping: currency to country
+  const currencyToCountry: Record<string, string> = {
+    "TWD": "TW",
+    "CNY": "CN",
+    "KRW": "KR",
+    "THB": "TH",
+    "USD": "US",
+    "EUR": "DE", // Using DE as a representative country for EUR
+    "GBP": "GB",
+    "CAD": "CA",
+    "JPY": "JP"
+  };
+
+  // Priority: Cookie > Cloudflare location > Default
+  let detectedCountry = "JP";
+  let detectedCurrency = "JPY";
+
+  if (preferredCurrency && currencyToCountry[preferredCurrency]) {
+    // User has manually selected a currency
+    detectedCountry = currencyToCountry[preferredCurrency];
+    detectedCurrency = preferredCurrency;
+    console.log(`[Loader] Using preferred currency from cookie: ${preferredCurrency} (${detectedCountry})`);
+  } else {
+    // Use Cloudflare location detection
+    const cf = (request as any).cf;
+    detectedCountry = cf?.country || "JP";
+    detectedCurrency = countryToCurrency[detectedCountry] || "JPY";
+    console.log(`[Loader] Cloudflare detected country: ${detectedCountry}, Currency: ${detectedCurrency}`);
+  }
+
   const QUERY = `
     query HomePage {
       featured: products(first: 8, sortKey: BEST_SELLING) {
@@ -77,7 +136,8 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
     const shopifyData = await shopifyFetch({
       query: QUERY,
       context,
-      language: locale // Pass locale to get translated data and prices from Shopify
+      language: locale, // Pass locale to get translated data
+      country: detectedCountry // Pass detected country for pricing
     });
 
     console.log(`[Loader] Raw Shopify Data:`, JSON.stringify(shopifyData, null, 2));
@@ -100,7 +160,10 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
         'CNY': '¥',
         'KRW': '₩',
         'THB': '฿',
-        'TWD': 'NT$'
+        'TWD': 'NT$',
+        'EUR': '€',
+        'GBP': '£',
+        'CAD': 'CA$'
       };
 
       const symbol = currencySymbols[currencyCode] || currencyCode;
@@ -128,10 +191,22 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
     const featuredProducts = shopifyData.featured.edges.map((edge: any) => formatProduct(edge.node));
     const newArrivals = shopifyData.newArrivals.edges.map((edge: any) => formatProduct(edge.node));
 
-    return json({ featuredProducts, newArrivals, locale });
+    return json({
+      featuredProducts,
+      newArrivals,
+      locale,
+      detectedCountry,
+      detectedCurrency
+    });
   } catch (error) {
     console.error("Loader Error:", error);
-    return json({ featuredProducts: [], newArrivals: [], locale });
+    return json({
+      featuredProducts: [],
+      newArrivals: [],
+      locale,
+      detectedCountry: "JP",
+      detectedCurrency: "JPY"
+    });
   }
 }
 
@@ -139,7 +214,7 @@ import Header from "~/components/Header";
 import Footer from "~/components/Footer";
 
 export default function Index() {
-  const { featuredProducts, newArrivals } = useLoaderData<typeof loader>();
+  const { featuredProducts, newArrivals, detectedCurrency } = useLoaderData<typeof loader>();
   const { t } = useTranslation();
 
   return (
@@ -149,7 +224,7 @@ export default function Index() {
         {t("announcement_shipping")}
       </div>
 
-      <Header />
+      <Header currentCurrency={detectedCurrency} />
 
       <main style={{ flex: 1 }}>
         <Hero />

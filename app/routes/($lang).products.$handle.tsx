@@ -60,6 +60,63 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
   const env = context.cloudflare.env as any;
   const locale = lang || "en";
 
+  // Parse cookies
+  const cookieHeader = request.headers.get("Cookie");
+  const cookies = cookieHeader?.split(';').reduce((acc: Record<string, string>, cookie: string) => {
+    const [key, value] = cookie.trim().split('=');
+    acc[key] = value;
+    return acc;
+  }, {} as Record<string, string>) || {};
+
+  const preferredCurrency = cookies['preferred_currency'];
+
+  // Map country to currency
+  const countryToCurrency: Record<string, string> = {
+    "TW": "TWD",
+    "CN": "CNY",
+    "KR": "KRW",
+    "TH": "THB",
+    "US": "USD",
+    "GB": "GBP",
+    "CA": "CAD",
+    "DE": "EUR",
+    "FR": "EUR",
+    "IT": "EUR",
+    "ES": "EUR",
+    "NL": "EUR",
+    "BE": "EUR",
+    "AT": "EUR",
+    "JP": "JPY"
+  };
+
+  // Reverse mapping: currency to country
+  const currencyToCountry: Record<string, string> = {
+    "TWD": "TW",
+    "CNY": "CN",
+    "KRW": "KR",
+    "THB": "TH",
+    "USD": "US",
+    "EUR": "DE",
+    "GBP": "GB",
+    "CAD": "CA",
+    "JPY": "JP"
+  };
+
+  // Priority: Cookie > Cloudflare location > Default
+  let detectedCountry = "JP";
+  let detectedCurrency = "JPY";
+
+  if (preferredCurrency && currencyToCountry[preferredCurrency]) {
+    detectedCountry = currencyToCountry[preferredCurrency];
+    detectedCurrency = preferredCurrency;
+    console.log(`[ProductDetail] Using preferred currency from cookie: ${preferredCurrency} (${detectedCountry})`);
+  } else {
+    const cf = (request as any).cf;
+    detectedCountry = cf?.country || "JP";
+    detectedCurrency = countryToCurrency[detectedCountry] || "JPY";
+    console.log(`[ProductDetail] Cloudflare detected country: ${detectedCountry}, Currency: ${detectedCurrency}`);
+  }
+
   const QUERY = `
     query ProductByHandle($handle: String!) {
       product(handle: $handle) {
@@ -102,7 +159,8 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
       query: QUERY,
       variables,
       context,
-      language: locale // Pass locale to get translated data from Shopify
+      language: locale,
+      country: detectedCountry // Pass locale to get translated data from Shopify
     });
 
     if (!product) {
@@ -112,34 +170,32 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
     const currencyCode = product.priceRange.minVariantPrice.currencyCode;
     const amount = parseFloat(product.priceRange.minVariantPrice.amount);
 
-    // Format price with currency symbol
+    // Currency symbol mapping
     const currencySymbols: Record<string, string> = {
       'USD': '$',
       'JPY': '¥',
       'CNY': '¥',
       'KRW': '₩',
       'THB': '฿',
-      'TWD': 'NT$'
+      'TWD': 'NT$',
+      'EUR': '€',
+      'GBP': '£',
+      'CAD': 'CA$'
     };
 
-    const symbol = currencySymbols[currencyCode] || currencyCode;
+    const currencySymbol = currencySymbols[currencyCode] || currencyCode;
 
-    // Formatting logic based on currency
-    let formattedPrice = '';
-    if (['JPY', 'KRW', 'TWD', 'THB', 'CNY'].includes(currencyCode)) {
-      formattedPrice = amount.toLocaleString('ja-JP', { maximumFractionDigits: 0 });
-    } else {
-      formattedPrice = amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-
-    const displayPrice = `${symbol}${formattedPrice}`;
+    // Format price based on currency
+    const formattedPrice = ['JPY', 'KRW', 'TWD', 'THB', 'CNY'].includes(currencyCode)
+      ? amount.toLocaleString('ja-JP', { maximumFractionDigits: 0 })
+      : amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     return json({
-      product, // Contains translated title and description from Shopify
+      product: { ...product, formattedPrice: `${currencySymbol}${formattedPrice}`, currencyCode },
       locale,
-      displayPrice // Pass pre-formatted price string
+      detectedCountry,
+      detectedCurrency
     });
-
   } catch (error) {
     console.error("Product Loader Error:", error);
     throw new Response("Not Found", { status: 404 });
@@ -149,7 +205,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
 import { useState } from "react";
 
 export default function ProductDetail() {
-  const { product, displayPrice } = useLoaderData<typeof loader>();
+  const { product, detectedCurrency } = useLoaderData<typeof loader>();
   const { t } = useTranslation();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
@@ -160,12 +216,12 @@ export default function ProductDetail() {
     product.images.edges[0]?.node.url || "https://placehold.co/600x600?text=No+Image"
   );
 
-  const price = displayPrice;
+  const price = product.formattedPrice;
   const variantId = product.variants.edges[0]?.node.id;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <Header />
+      <Header currentCurrency={detectedCurrency} />
 
       <main className="container" style={{ padding: "40px 20px", flex: 1 }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "40px" }}>
