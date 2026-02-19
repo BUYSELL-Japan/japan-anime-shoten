@@ -20,10 +20,12 @@ export default function Footer() {
                     <div>
                         <h3 style={{ color: "white", marginBottom: "20px", fontWeight: "700" }}>{t('footer_customer_care')}</h3>
                         <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px", padding: 0 }}>
-                            <li><Link to="/shipping" style={{ color: "#888" }}>{t('footer_shipping_policy')}</Link></li>
-                            <li><Link to="/returns" style={{ color: "#888" }}>{t('footer_return_policy')}</Link></li>
-                            <li><Link to="/faq" style={{ color: "#888" }}>{t('footer_faq')}</Link></li>
-                            <li><Link to="/contact" style={{ color: "#888" }}>{t('footer_contact_us')}</Link></li>
+                            <li><Link to="/policies/shipping-policy" style={{ color: "#888" }}>{t('footer_shipping_policy')}</Link></li>
+                            <li><Link to="/policies/refund-policy" style={{ color: "#888" }}>{t('footer_return_policy')}</Link></li>
+                            <li><Link to="/policies/privacy-policy" style={{ color: "#888" }}>{t('policies.privacy.title')}</Link></li>
+                            <li><Link to="/policies/terms-of-service" style={{ color: "#888" }}>{t('policies.terms.title')}</Link></li>
+                            <li><Link to="/policies/legal-notice" style={{ color: "#888" }}>{t('policies.legal.title')}</Link></li>
+                            {/* <li><Link to="/contact" style={{ color: "#888" }}>{t('footer_contact_us')}</Link></li> */}
                         </ul>
                     </div>
                     <div>

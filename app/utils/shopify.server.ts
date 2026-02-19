@@ -138,11 +138,11 @@ export async function shopifyFetch({
 
         const json = await response.json();
 
-        if (json.errors) {
-            throw new Error(`Shopify GraphQL errors: ${JSON.stringify(json.errors)}`);
+        if ((json as any).errors) {
+            throw new Error(`Shopify GraphQL errors: ${JSON.stringify((json as any).errors)}`);
         }
 
-        return json.data;
+        return (json as any).data;
     } catch (error) {
         console.error("Shopify Fetch Error:", error);
         throw error;
