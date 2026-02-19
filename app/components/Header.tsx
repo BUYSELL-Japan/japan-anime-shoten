@@ -2,11 +2,14 @@ import { Form, Link, useLocation, useParams, useNavigate } from "@remix-run/reac
 import { useTranslation } from "react-i18next";
 import CurrencySelector from "./CurrencySelector";
 
+import { useCart } from "~/context/CartContext";
+
 export default function Header({ currentCurrency }: { currentCurrency?: string }) {
     const { t } = useTranslation();
     const { lang } = useParams();
     const location = useLocation();
     const navigate = useNavigate();
+    const { openCart, cart } = useCart();
 
     const currentLang = lang || "en";
 
@@ -93,8 +96,14 @@ export default function Header({ currentCurrency }: { currentCurrency?: string }
                     {/* Currency Selector */}
                     <CurrencySelector currentCurrency={currentCurrency || 'JPY'} />
 
-                    <button style={{ fontWeight: "600", border: "none", background: "none", cursor: "pointer" }}>Search</button>
-                    <button className="btn-primary" style={{ padding: "8px 16px", fontSize: "0.9rem" }}>Cart (0)</button>
+                    <button style={{ fontWeight: "600", border: "none", background: "none", cursor: "pointer" }}>{t('search')}</button>
+                    <button
+                        className="btn-primary"
+                        style={{ padding: "8px 16px", fontSize: "0.9rem" }}
+                        onClick={openCart}
+                    >
+                        Cart ({cart?.totalQuantity || 0})
+                    </button>
                 </div>
             </div>
         </header>

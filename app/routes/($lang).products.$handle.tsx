@@ -203,11 +203,13 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
 }
 
 import { useState } from "react";
+import { useCart } from "~/context/CartContext";
 
 export default function ProductDetail() {
   const { product, detectedCurrency } = useLoaderData<typeof loader>();
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const { addToCart, isLoading } = useCart();
   const isSubmitting = navigation.state === "submitting";
 
   // State for the currently selected main image
@@ -274,16 +276,14 @@ export default function ProductDetail() {
 
             {/* Actions */}
             <div style={{ display: "flex", flexDirection: "column", gap: "15px", maxWidth: "400px" }}>
-              <Form method="post">
-                <input type="hidden" name="variantId" value={variantId} />
-                <button
-                  className="btn-primary"
-                  disabled={isSubmitting}
-                  style={{ padding: "15px", fontSize: "1.1rem", width: "100%", opacity: isSubmitting ? 0.7 : 1 }}
-                >
-                  {isSubmitting ? "Processing..." : t("add_to_cart", { defaultValue: "Buy Now" })}
-                </button>
-              </Form>
+              <button
+                className="btn-primary"
+                disabled={isSubmitting || isLoading}
+                onClick={() => addToCart(variantId)}
+                style={{ padding: "15px", fontSize: "1.1rem", width: "100%", opacity: (isSubmitting || isLoading) ? 0.7 : 1, cursor: "pointer" }}
+              >
+                {isLoading ? "Processing..." : t("add_to_cart", { defaultValue: "Buy Now" })}
+              </button>
             </div>
 
             <div style={{ marginTop: "30px", fontSize: "0.9rem", color: "#666" }}>

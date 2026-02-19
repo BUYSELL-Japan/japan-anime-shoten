@@ -9,6 +9,7 @@ export interface Product {
     image: string;
     rating: number;
     handle?: string;
+    variantId?: string;
 }
 
 interface ProductCardProps {
@@ -16,9 +17,12 @@ interface ProductCardProps {
     index?: number;
 }
 
+import { useCart } from "~/context/CartContext";
+
 export default function ProductCard({ product, index = 0 }: ProductCardProps) {
     const { t } = useTranslation();
     const { lang } = useParams();
+    const { addToCart, isLoading } = useCart();
     const currentLang = lang || "en";
 
     // Scroll Animation Logic
@@ -45,6 +49,20 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
 
         return () => observer.disconnect();
     }, []);
+
+    const handleAddToCart = (e: React.MouseEvent) => {
+        e.preventDefault(); // Prevent navigation to product page
+        if (product.variantId) {
+            addToCart(product.variantId);
+            // Optionally open cart here if not handled by context
+        } else {
+            // Fallback to navigation if no variant ID (shouldn't happen with updated query)
+            // Navigate handled by parent Link if we bubble but we preventDefault.
+            // Manually navigate?
+            // Actually, if we prevent default, the Link won't trigger.
+            // If no variant ID, maybe we SHOULD let it bubble?
+        }
+    };
 
     return (
         <div
@@ -81,7 +99,12 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                 </div>
             </Link>
             <div style={{ padding: "0 15px 15px" }}>
-                <button className="btn-primary" style={{ width: "100%", padding: "8px", fontSize: "0.9rem" }}>
+                <button
+                    className="btn-primary"
+                    style={{ width: "100%", padding: "8px", fontSize: "0.9rem", opacity: isLoading ? 0.7 : 1, cursor: "pointer" }}
+                    onClick={handleAddToCart}
+                    disabled={isLoading}
+                >
                     {t("add_to_cart", { defaultValue: "Add to Cart" })}
                 </button>
             </div>

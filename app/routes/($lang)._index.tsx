@@ -97,6 +97,13 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
                 currencyCode
               }
             }
+            variants(first: 1) {
+              edges {
+                node {
+                  id
+                }
+              }
+            }
             images(first: 1) {
               edges {
                 node {
@@ -117,6 +124,13 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
               minVariantPrice {
                 amount
                 currencyCode
+              }
+            }
+            variants(first: 1) {
+              edges {
+                node {
+                  id
+                }
               }
             }
             images(first: 1) {
@@ -185,6 +199,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
         currencyCode,
         image: node.images.edges[0]?.node.url || "https://placehold.co/400x400?text=No+Image",
         rating: 5,
+        variantId: node.variants?.edges[0]?.node.id,
       };
     };
 

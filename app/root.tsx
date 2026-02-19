@@ -59,6 +59,9 @@ export let handle = {
     i18n: "common",
 };
 
+import { CartProvider } from "./context/CartContext";
+import CartDrawer from "./components/CartDrawer";
+
 export default function App() {
     let { locale } = useLoaderData<typeof loader>();
     let { i18n } = useTranslation();
@@ -78,7 +81,10 @@ export default function App() {
                 <Links />
             </head>
             <body>
-                <Outlet />
+                <CartProvider>
+                    <Outlet />
+                    <CartDrawer />
+                </CartProvider>
                 <ScrollRestoration />
                 <Scripts />
             </body>
