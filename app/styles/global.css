@@ -160,3 +160,23 @@ button {
   transform: scale(1.08);
   /* Subtle zoom */
 }
+
+@keyframes cart-pop {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.15);
+    box-shadow: 0 0 10px rgba(230, 0, 18, 0.5);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.cart-added-animation {
+  animation: cart-pop 0.5s ease;
+  background-color: var(--color-primary-dark) !important;
+}

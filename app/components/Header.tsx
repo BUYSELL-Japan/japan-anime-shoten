@@ -1,5 +1,6 @@
 import { Form, Link, useLocation, useParams, useNavigate } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
 import CurrencySelector from "./CurrencySelector";
 
 import { useCart } from "~/context/CartContext";
@@ -10,8 +11,21 @@ export default function Header({ currentCurrency }: { currentCurrency?: string }
     const location = useLocation();
     const navigate = useNavigate();
     const { openCart, cart } = useCart();
+    const [isAnimating, setIsAnimating] = useState(false);
+    const [prevQuantity, setPrevQuantity] = useState(cart?.totalQuantity || 0);
 
     const currentLang = lang || "en";
+
+    useEffect(() => {
+        if (cart?.totalQuantity && cart.totalQuantity > prevQuantity) {
+            setIsAnimating(true);
+            const timer = setTimeout(() => setIsAnimating(false), 500);
+            setPrevQuantity(cart.totalQuantity);
+            return () => clearTimeout(timer);
+        } else if (cart?.totalQuantity !== prevQuantity) {
+            setPrevQuantity(cart?.totalQuantity || 0);
+        }
+    }, [cart?.totalQuantity, prevQuantity]);
 
     const changeLanguage = (newLang: string) => {
         let newPath = location.pathname;
@@ -98,7 +112,7 @@ export default function Header({ currentCurrency }: { currentCurrency?: string }
 
                     <button style={{ fontWeight: "600", border: "none", background: "none", cursor: "pointer" }}>{t('search')}</button>
                     <button
-                        className="btn-primary"
+                        className={`btn-primary ${isAnimating ? "cart-added-animation" : ""}`}
                         style={{ padding: "8px 16px", fontSize: "0.9rem" }}
                         onClick={openCart}
                     >
