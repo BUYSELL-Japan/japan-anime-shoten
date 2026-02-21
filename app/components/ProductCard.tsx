@@ -83,7 +83,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                     <img
                         src={product.image}
                         alt={product.title}
-                        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                        style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
                         loading="lazy"
                     />
                 </div>
