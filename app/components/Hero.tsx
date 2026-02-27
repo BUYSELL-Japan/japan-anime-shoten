@@ -8,12 +8,12 @@ export default function Hero() {
 
     const slides = [
         {
-            image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=2000&auto=format&fit=crop",
+            image: "/images/anime_v3_hero_1.png",
             titleKey: "hero_title_1",
             subtitleKey: "hero_subtitle_1"
         },
         {
-            image: "https://images.unsplash.com/photo-1615653051968-69c27954d9b9?q=80&w=2000&auto=format&fit=crop",
+            image: "/images/anime_v3_hero_2.png",
             titleKey: "hero_title_2",
             subtitleKey: "hero_subtitle_2"
         },

@@ -85,12 +85,38 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
 
   const QUERY = `
     query HomePage {
+      collections(first: 10, sortKey: UPDATED_AT, reverse: true) {
+        edges {
+          node {
+            id
+            title
+            handle
+            image {
+              url
+            }
+            products(first: 1) {
+              edges {
+                node {
+                  images(first: 1) {
+                    edges {
+                      node {
+                        url
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
       featured: products(first: 8, sortKey: BEST_SELLING) {
         edges {
           node {
             id
             title
             handle
+            availableForSale
             priceRange {
               minVariantPrice {
                 amount
@@ -101,6 +127,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
               edges {
                 node {
                   id
+                  quantityAvailable
                 }
               }
             }
@@ -120,6 +147,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
             id
             title
             handle
+            availableForSale
             priceRange {
               minVariantPrice {
                 amount
@@ -130,6 +158,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
               edges {
                 node {
                   id
+                  quantityAvailable
                 }
               }
             }
@@ -154,14 +183,9 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
       country: detectedCountry // Pass detected country for pricing
     });
 
-    console.log(`[Loader] Raw Shopify Data:`, JSON.stringify(shopifyData, null, 2));
-
+    console.log(`[Loader] Fetched ${shopifyData.collections?.edges.length || 0} collections`);
     console.log(`[Loader] Fetched ${shopifyData.featured.edges.length} featured products`);
     console.log(`[Loader] Fetched ${shopifyData.newArrivals.edges.length} new arrivals`);
-
-    if (shopifyData.newArrivals.edges.length > 0) {
-      console.log(`[Loader] First new arrival:`, JSON.stringify(shopifyData.newArrivals.edges[0].node, null, 2));
-    }
 
     const formatProduct = (node: any) => {
       const currencyCode = node.priceRange.minVariantPrice.currencyCode;
@@ -200,13 +224,42 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
         image: node.images.edges[0]?.node.url || "https://placehold.co/400x400?text=No+Image",
         rating: 5,
         variantId: node.variants?.edges[0]?.node.id,
+        availableForSale: node.availableForSale,
+        inventoryQuantity: node.variants?.edges[0]?.node.quantityAvailable,
       };
     };
 
+    const formatCollection = (node: any) => {
+      // 1. Try to use the collection's dedicated image
+      let imageUrl = node.image?.url;
+
+      // 2. If no dedicated image, use the first product's image as thumbnail
+      if (!imageUrl && node.products?.edges?.length > 0) {
+        const firstProduct = node.products.edges[0].node;
+        if (firstProduct.images?.edges?.length > 0) {
+          imageUrl = firstProduct.images.edges[0].node.url;
+        }
+      }
+
+      // 3. Fallback to placeholder
+      if (!imageUrl) {
+        imageUrl = `https://placehold.co/400x600?text=${encodeURIComponent(node.title)}`;
+      }
+
+      return {
+        id: node.id,
+        title: node.title,
+        handle: node.handle,
+        image: imageUrl
+      };
+    };
+
+    const collections = (shopifyData.collections?.edges || []).map((edge: any) => formatCollection(edge.node));
     const featuredProducts = shopifyData.featured.edges.map((edge: any) => formatProduct(edge.node));
     const newArrivals = shopifyData.newArrivals.edges.map((edge: any) => formatProduct(edge.node));
 
     return json({
+      collections,
       featuredProducts,
       newArrivals,
       locale,
@@ -216,6 +269,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
   } catch (error) {
     console.error("Loader Error:", error);
     return json({
+      collections: [],
       featuredProducts: [],
       newArrivals: [],
       locale,
@@ -227,9 +281,10 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
 
 import Header from "~/components/Header";
 import Footer from "~/components/Footer";
+import CollectionSlider from "~/components/CollectionSlider";
 
 export default function Index() {
-  const { featuredProducts, newArrivals, detectedCurrency } = useLoaderData<typeof loader>();
+  const { collections, featuredProducts, newArrivals, detectedCurrency } = useLoaderData<typeof loader>();
   const { t } = useTranslation();
 
   return (
@@ -243,6 +298,7 @@ export default function Index() {
 
       <main style={{ flex: 1 }}>
         <Hero />
+        <CollectionSlider collections={collections} />
         <NewArrivals products={newArrivals} />
         <TrustBadges />
         <ProductGrid products={featuredProducts} />

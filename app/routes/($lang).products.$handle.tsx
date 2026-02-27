@@ -123,6 +123,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
         id
         title
         descriptionHtml
+        availableForSale
         priceRange {
           minVariantPrice {
             amount
@@ -133,6 +134,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
           edges {
             node {
               id
+              quantityAvailable
               price {
                 amount
                 currencyCode
@@ -190,8 +192,10 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
       ? amount.toLocaleString('ja-JP', { maximumFractionDigits: 0 })
       : amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
+    const inventoryQuantity = product.variants.edges[0]?.node?.quantityAvailable;
+
     return json({
-      product: { ...product, formattedPrice: `${currencySymbol}${formattedPrice}`, currencyCode },
+      product: { ...product, formattedPrice: `${currencySymbol}${formattedPrice}`, currencyCode, inventoryQuantity },
       locale,
       detectedCountry,
       detectedCurrency
@@ -202,7 +206,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
   }
 }
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "~/context/CartContext";
 
 export default function ProductDetail() {
@@ -218,8 +222,47 @@ export default function ProductDetail() {
     product.images.edges[0]?.node.url || "https://placehold.co/600x600?text=No+Image"
   );
 
+  // Lightbox States
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
   const price = product.formattedPrice;
   const variantId = product.variants.edges[0]?.node.id;
+  const isAvailable = product.availableForSale !== false;
+  const isOnlyOneLeft = product.inventoryQuantity === 1;
+
+  const images = product.images.edges;
+
+  // Keydown listener for lightbox navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isLightboxOpen) return;
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowRight") nextImage();
+      if (e.key === "ArrowLeft") prevImage();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isLightboxOpen, lightboxIndex, images.length]);
+
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setIsLightboxOpen(true);
+    document.body.style.overflow = "hidden"; // Prevent background scrolling
+  };
+
+  const closeLightbox = () => {
+    setIsLightboxOpen(false);
+    document.body.style.overflow = "auto";
+  };
+
+  const nextImage = () => {
+    setLightboxIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = () => {
+    setLightboxIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -229,15 +272,83 @@ export default function ProductDetail() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "40px" }}>
           {/* Images */}
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            <div style={{ borderRadius: "8px", overflow: "hidden", border: "1px solid #eee", background: "#fff", display: "flex", justifyContent: "center", alignItems: "center", height: "600px", width: "100%" }}>
+            <div
+              style={{
+                borderRadius: "8px",
+                overflow: "hidden",
+                border: "1px solid #eee",
+                background: "#fff",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "600px",
+                width: "100%",
+                cursor: "zoom-in",
+                position: "relative"
+              }}
+              onClick={() => {
+                const currentIndex = images.findIndex((edge: any) => edge.node.url === mainImage);
+                openLightbox(currentIndex >= 0 ? currentIndex : 0);
+              }}
+            >
               <img
                 src={mainImage}
                 alt={product.title}
-                style={{ maxWidth: "100%", maxHeight: "100%", width: "auto", height: "auto", objectFit: "contain", display: "block" }}
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "100%",
+                  width: "auto",
+                  height: "auto",
+                  objectFit: "contain",
+                  display: "block",
+                  opacity: isAvailable ? 1 : 0.5,
+                  transition: "opacity 0.3s"
+                }}
               />
+              {!isAvailable && (
+                <div style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  background: "rgba(0,0,0,0.7)",
+                  color: "white",
+                  padding: "16px 32px",
+                  borderRadius: "8px",
+                  fontWeight: "bold",
+                  fontSize: "1.5rem",
+                  letterSpacing: "2px",
+                  zIndex: 2,
+                  textTransform: "uppercase"
+                }}>
+                  Sold Out
+                </div>
+              )}
+              {/* Zoom hint icon */}
+              <div style={{
+                position: "absolute",
+                bottom: "16px",
+                right: "16px",
+                background: "rgba(255,255,255,0.8)",
+                borderRadius: "50%",
+                width: "40px",
+                height: "40px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                pointerEvents: "none"
+              }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  <line x1="11" y1="8" x2="11" y2="14"></line>
+                  <line x1="8" y1="11" x2="14" y2="11"></line>
+                </svg>
+              </div>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(60px, 1fr))", gap: "10px" }}>
-              {product.images.edges.map((edge: any, i: number) => (
+              {images.map((edge: any, i: number) => (
                 <div
                   key={i}
                   style={{
@@ -245,7 +356,7 @@ export default function ProductDetail() {
                     overflow: "hidden",
                     border: mainImage === edge.node.url ? "2px solid var(--color-primary)" : "1px solid #eee",
                     cursor: "pointer",
-                    opacity: mainImage === edge.node.url ? 1 : 0.7,
+                    opacity: mainImage === edge.node.url ? 1 : 0.4,
                     aspectRatio: "1/1"
                   }}
                   onClick={() => setMainImage(edge.node.url)}
@@ -268,21 +379,71 @@ export default function ProductDetail() {
           {/* Details */}
           <div>
             <h1 style={{ fontSize: "2rem", fontWeight: "700", marginBottom: "10px" }}>{product.title}</h1>
-            <div style={{ fontSize: "1.5rem", fontWeight: "600", color: "var(--color-primary)", marginBottom: "20px" }}>
-              {price}
+            <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "20px" }}>
+              <div style={{ fontSize: "1.5rem", fontWeight: "600", color: isAvailable ? "var(--color-primary)" : "#999" }}>
+                {price}
+              </div>
+              {!isAvailable && (
+                <span style={{
+                  background: "#666",
+                  color: "white",
+                  padding: "4px 12px",
+                  borderRadius: "20px",
+                  fontSize: "0.9rem",
+                  fontWeight: "bold",
+                  textTransform: "uppercase"
+                }}>
+                  Sold Out
+                </span>
+              )}
             </div>
+
+            {isOnlyOneLeft && isAvailable && (
+              <div style={{
+                color: "white",
+                backgroundColor: "#e53e3e", // Red background
+                padding: "8px 16px",
+                borderRadius: "4px",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                fontSize: "1rem",
+                fontWeight: "bold",
+                marginBottom: "20px",
+                boxShadow: "0 2px 4px rgba(229, 62, 62, 0.3)"
+              }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                Only 1 left!
+              </div>
+            )}
 
             <div style={{ marginBottom: "30px", lineHeight: "1.6", color: "#444" }} dangerouslySetInnerHTML={{ __html: product.descriptionHtml }} />
 
             {/* Actions */}
             <div style={{ display: "flex", flexDirection: "column", gap: "15px", maxWidth: "400px" }}>
               <button
-                className="btn-primary"
-                disabled={isSubmitting || isLoading}
-                onClick={() => addToCart(variantId)}
-                style={{ padding: "15px", fontSize: "1.1rem", width: "100%", opacity: (isSubmitting || isLoading) ? 0.7 : 1, cursor: "pointer" }}
+                className={isAvailable ? "btn-primary" : ""}
+                disabled={isSubmitting || isLoading || !isAvailable}
+                onClick={() => {
+                  if (isAvailable && variantId) addToCart(variantId);
+                }}
+                style={{
+                  padding: "15px",
+                  fontSize: "1.1rem",
+                  width: "100%",
+                  opacity: (isSubmitting || isLoading || !isAvailable) ? 0.7 : 1,
+                  cursor: isAvailable ? "pointer" : "not-allowed",
+                  backgroundColor: isAvailable ? "" : "#ccc",
+                  color: isAvailable ? "" : "#666",
+                  border: isAvailable ? "" : "none",
+                  fontWeight: "600"
+                }}
               >
-                {isLoading ? "Processing..." : t("add_to_cart", { defaultValue: "Buy Now" })}
+                {isLoading ? "Processing..." : (!isAvailable ? "Sold Out" : t("add_to_cart", { defaultValue: "Buy Now" }))}
               </button>
             </div>
 
@@ -295,6 +456,142 @@ export default function ProductDetail() {
       </main>
 
       <Footer />
+
+      {/* Lightbox Modal */}
+      {isLightboxOpen && images.length > 0 && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.9)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+          onClick={closeLightbox}
+        >
+          <div
+            style={{ position: "relative", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
+            onClick={(e) => e.stopPropagation()} // Prevent clicks on image area from closing modal
+          >
+            {/* Close Button */}
+            <button
+              onClick={closeLightbox}
+              style={{
+                position: "absolute",
+                top: "20px",
+                right: "20px",
+                background: "rgba(255,255,255,0.1)",
+                color: "#fff",
+                border: "none",
+                borderRadius: "50%",
+                width: "50px",
+                height: "50px",
+                fontSize: "24px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 10000,
+                transition: "background 0.2s"
+              }}
+              onMouseOver={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.3)"}
+              onMouseOut={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.1)"}
+            >
+              &times;
+            </button>
+
+            {/* Previous Button */}
+            {images.length > 1 && (
+              <button
+                onClick={prevImage}
+                style={{
+                  position: "absolute",
+                  left: "20px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "rgba(255,255,255,0.1)",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "50%",
+                  width: "60px",
+                  height: "60px",
+                  fontSize: "30px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  zIndex: 10000,
+                  transition: "background 0.2s"
+                }}
+                onMouseOver={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.3)"}
+                onMouseOut={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.1)"}
+              >
+                &#10094;
+              </button>
+            )}
+
+            {/* Main Image */}
+            <img
+              src={images[lightboxIndex]?.node.url || mainImage}
+              alt={images[lightboxIndex]?.node.altText || product.title}
+              style={{
+                width: "90vw",
+                height: "90vh",
+                objectFit: "contain",
+                userSelect: "none"
+              }}
+            />
+
+            {/* Next Button */}
+            {images.length > 1 && (
+              <button
+                onClick={nextImage}
+                style={{
+                  position: "absolute",
+                  right: "20px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "rgba(255,255,255,0.1)",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "50%",
+                  width: "60px",
+                  height: "60px",
+                  fontSize: "30px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  zIndex: 10000,
+                  transition: "background 0.2s"
+                }}
+                onMouseOver={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.3)"}
+                onMouseOut={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.1)"}
+              >
+                &#10095;
+              </button>
+            )}
+
+            {/* Image Counter */}
+            {images.length > 1 && (
+              <div style={{
+                position: "absolute",
+                bottom: "20px",
+                color: "#fff",
+                background: "rgba(0,0,0,0.5)",
+                padding: "5px 15px",
+                borderRadius: "20px",
+                fontSize: "14px",
+                letterSpacing: "1px"
+              }}>
+                {lightboxIndex + 1} / {images.length}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

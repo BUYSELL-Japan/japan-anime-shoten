@@ -61,6 +61,7 @@ export let handle = {
 
 import { CartProvider } from "./context/CartContext";
 import CartDrawer from "./components/CartDrawer";
+import { useEffect } from "react";
 
 export default function App() {
     let { locale } = useLoaderData<typeof loader>();
@@ -72,9 +73,39 @@ export default function App() {
     // language.
     useChangeLanguage(locale);
 
+    useEffect(() => {
+        // Initialize Crisp Chat
+        window.$crisp = [];
+        window.CRISP_WEBSITE_ID = "26ac3e40-b532-461a-b902-543b858d1fe3";
+
+        const d = document;
+        const s = d.createElement("script");
+        s.src = "https://client.crisp.chat/l.js";
+        s.async = true;
+
+        // Append to head only if not already added
+        if (!document.querySelector('script[src="https://client.crisp.chat/l.js"]')) {
+            d.getElementsByTagName("head")[0].appendChild(s);
+        }
+    }, []);
+
     return (
         <html lang={locale} dir={i18n.dir()} suppressHydrationWarning>
             <head>
+                {/* Google tag (gtag.js) */}
+                <script async src="https://www.googletagmanager.com/gtag/js?id=G-EJNLPB6YG0"></script>
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `
+                            window.dataLayer = window.dataLayer || [];
+                            function gtag(){dataLayer.push(arguments);}
+                            gtag('js', new Date());
+
+                            gtag('config', 'G-EJNLPB6YG0');
+                        `,
+                    }}
+                />
+
                 <meta charSet="utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <meta name="google-site-verification" content="uhVyFz8gxRZ70zYu7xldgnJBNE89v5cASmrKSlzs05o" />

@@ -80,6 +80,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
             id
             title
             handle
+            availableForSale
             priceRange {
               minVariantPrice {
                 amount
@@ -90,6 +91,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
               edges {
                 node {
                   id
+                  quantityAvailable
                 }
               }
             }
@@ -141,6 +143,8 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
                 image: node.images.edges[0]?.node.url || "https://placehold.co/400x400?text=No+Image",
                 rating: 5,
                 variantId: node.variants?.edges[0]?.node.id,
+                availableForSale: node.availableForSale,
+                inventoryQuantity: node.variants?.edges[0]?.node.quantityAvailable,
             };
         };
 

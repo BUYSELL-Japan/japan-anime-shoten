@@ -36,7 +36,7 @@
     "footer_wholesale": "Wholesale",
     "footer_customer_care": "Customer Care",
     "footer_shipping_policy": "Shipping Policy",
-    "footer_return_policy": "Return Policy",
+    "footer_return_policy": "Return & Refund Policy",
     "footer_faq": "FAQ",
     "footer_contact_us": "Contact Us",
     "footer_newsletter": "Newsletter",
@@ -45,51 +45,156 @@
     "footer_join": "Join",
     "policies": {
         "refund": {
-            "title": "Refund Policy",
+            "title": "Return & Refund Policy",
             "sections": [
                 {
-                    "title": "Returns",
+                    "title": "",
                     "content": [
-                        "Returns are accepted only if contacted within 7 days of arrival.",
-                        "Items must be unopened to be eligible for return.",
-                        "Opened items cannot be returned.",
-                        "Return shipping costs are the responsibility of the customer."
+                        "We want you to be completely satisfied with your purchase. If you are not satisfied, we offer returns and refunds under the following conditions."
                     ]
                 },
                 {
-                    "title": "Non-returnable Items",
+                    "title": "Return Eligibility",
                     "content": [
-                        "Items where 8 or more days have passed since arrival.",
+                        "Returns are accepted if contacted within 14 days of delivery.",
+                        "Items must be unopened and in original condition.",
+                        "Original packaging, accessories, and tags must be intact.",
+                        "Proof of purchase (order number) is required.",
+                        "Why 14 days? We understand international shipping takes time. We provide 14 days to ensure you have enough time to inspect your item upon arrival."
+                    ]
+                },
+                {
+                    "title": "Return Shipping Costs",
+                    "content": [
+                        "Customer's responsibility for standard returns.",
+                        "Our responsibility for defective, damaged, or incorrect items."
+                    ]
+                },
+                {
+                    "title": "Non-Returnable Items",
+                    "content": [
+                        "Items where 15 or more days have passed since delivery.",
                         "Items that have been opened or used.",
-                        "Items damaged or soiled by the customer.",
-                        "Sale items or special price items (marked as non-returnable)."
+                        "Items damaged or soiled by customer handling.",
+                        "Sale items or special price items marked as 'Final Sale - No Returns'.",
+                        "Items without original packaging or missing accessories."
                     ]
                 },
                 {
-                    "title": "Refunds",
+                    "title": "Refund Timeline",
                     "content": [
-                        "Refunds will be processed within 7 business days after receiving the returned item.",
-                        "Refund amount depends on the condition of the item.",
-                        "Full refund for unopened items in good condition.",
-                        "Partial refunds may apply if there are issues with the item.",
-                        "Refunds will be issued to the original payment method."
+                        "Notify us: Contact within 14 days of delivery.",
+                        "Ship back: Send item within 7 days after receiving return address.",
+                        "Inspection: We inspect within 3 business days of receiving return.",
+                        "Refund processed: Within 5-7 business days after inspection.",
+                        "Money in account: 3-10 business days depending on your payment method."
                     ]
                 },
                 {
-                    "title": "Defective or Damaged Items",
+                    "title": "Refund Amount",
                     "content": [
-                        "Please contact us within 7 days of arrival if the item is damaged or defective.",
-                        "We will cover return shipping costs for defective or damaged items.",
-                        "We will offer an exchange or full refund."
+                        "Full refund: Unopened items in perfect condition.",
+                        "Partial refund: Items with minor packaging damage (evaluated case-by-case).",
+                        "No refund: Opened items, damaged items due to customer mishandling.",
+                        "Note: Original shipping costs are non-refundable unless the return is due to our error."
+                    ]
+                },
+                {
+                    "title": "Refund Method",
+                    "content": [
+                        "Refunds are issued to the original payment method.",
+                        "Credit card refunds: 3-10 business days.",
+                        "PayPal refunds: 1-3 business days."
+                    ]
+                },
+                {
+                    "title": "Defective or Damaged Items \uD83D\uDEE1\uFE0F",
+                    "content": [
+                        "We take full responsibility for defective or damaged items.",
+                        "Contact us within 14 days of delivery.",
+                        "We will provide a full refund or free replacement (your choice).",
+                        "We cover all return shipping costs.",
+                        "No restocking fees."
+                    ],
+                    "subsections": [
+                        {
+                            "title": "Required Evidence",
+                            "content": [
+                                "Photos or videos showing the damage or defect.",
+                                "Clear images of the item, packaging, and shipping label.",
+                                "Description of the issue.",
+                                "Tip: Take photos/videos when you open the package. This helps us resolve issues faster."
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "Incorrect Items \uD83D\uDCE6",
+                    "content": [
+                        "If we sent you the wrong item:",
+                        "Contact us within 14 days of delivery.",
+                        "We will send the correct item at no additional cost.",
+                        "You can keep or return the incorrect item (your choice).",
+                        "Free return shipping provided."
                     ]
                 },
                 {
                     "title": "Return Process",
                     "content": [
-                        "Please contact japan.anime.shoten@gmail.com.",
-                        "Include your order number, item name, and reason for return.",
-                        "We will provide the return address.",
-                        "Please ship the item back to us."
+                        "Step 1: Contact us at japan.anime.shoten@gmail.com with your order number, item name/SKU, reason for return, and photos (if defective/damaged).",
+                        "Step 2: We will review your request within 24-48 hours. You will receive a Return Authorization (RA) number and return shipping address.",
+                        "Step 3: Pack the item securely in original packaging. Include the RA number on the package. Ship to the provided address and keep your tracking number.",
+                        "Step 4: We inspect within 3 business days. Refund processed within 5-7 business days. Email confirmation sent when refund is issued.",
+                        "Important: Do not ship items back without an RA number. Unauthorized returns may not be accepted."
+                    ]
+                },
+                {
+                    "title": "Exchanges",
+                    "content": [
+                        "We currently do not offer direct exchanges.",
+                        "If you want a different item: Return the original item for a refund, then place a new order for the item you want.",
+                        "Note: We are working on a direct exchange system for the future."
+                    ]
+                },
+                {
+                    "title": "Lost or Damaged in Transit \uD83D\uDCEC",
+                    "content": [
+                        "If your package is lost: Contact us if tracking shows no movement for 30 days. We will investigate with the shipping carrier. Full refund or replacement provided after investigation.",
+                        "If your package is damaged in transit: Contact us within 14 days with photos of damaged packaging. We will file a claim with the carrier. Full refund or replacement provided.",
+                        "You are not responsible for carrier errors."
+                    ]
+                },
+                {
+                    "title": "Customs-Related Returns \u26A0\uFE0F",
+                    "content": [
+                        "If you refuse customs fees: Item will be returned to us. Refund minus all shipping costs (original + return). Restocking fee may apply.",
+                        "If package is seized by customs: We are not responsible for customs seizures. No refunds for items seized due to local regulations. Please check your country's import restrictions before ordering."
+                    ]
+                },
+                {
+                    "title": "Special Circumstances",
+                    "content": [
+                        "Buyer's remorse (changed your mind): Returns accepted within 14 days. Item must be unopened. Return shipping paid by customer. Full refund (minus original shipping).",
+                        "Pre-order cancellations: Can cancel anytime before item ships. Full refund provided. Once shipped, standard return policy applies."
+                    ]
+                },
+                {
+                    "title": "Contact Us",
+                    "content": [
+                        "Email: japan.anime.shoten@gmail.com",
+                        "Business Hours: Weekdays 10:00-18:00 (Japan Time)",
+                        "Closed: Weekends and Japanese national holidays",
+                        "Response Time: We aim to respond within 24-48 hours"
+                    ]
+                },
+                {
+                    "title": "Our Commitment \uD83D\uDC99",
+                    "content": [
+                        "Customer satisfaction is our priority.",
+                        "We handle all return requests fairly and quickly.",
+                        "Communication in English, Chinese, Korean, Thai, and Japanese.",
+                        "We're here to help resolve any issues.",
+                        "Thank you for shopping with us!"
                     ]
                 }
             ]
@@ -100,17 +205,22 @@
                 {
                     "title": "Shipping Methods",
                     "content": [
-                        "We primarily use Japan Post International ePacket Light.",
-                        "Some items are shipped via EMS (Express Mail Service).",
-                        "All items come with a tracking number."
+                        "International Destinations:",
+                        "Asia, Europe, Canada, UK: Japan Post International ePacket Light or EMS (Express Mail Service)",
+                        "USA: Commercial courier service (DHL, FedEx, or similar)",
+                        "All items come with a tracking number",
+                        "Note: Due to current postal restrictions, we use commercial courier services for shipments to the United States. This ensures reliable and trackable delivery."
                     ]
                 },
                 {
                     "title": "Shipping Time",
                     "content": [
                         "Orders are shipped within 5-7 business days after confirmation.",
-                        "Delivery usually takes 7-16 days after shipment.",
-                        "Delivery items may vary depending on the destination country or region.",
+                        "Delivery time after shipment:",
+                        "Asia: 7-12 days",
+                        "USA (courier): 5-10 days",
+                        "Europe/Canada/UK: 10-16 days",
+                        "Delivery times may vary depending on the destination country or region.",
                         "Delays may occur during busy seasons or due to customs inspections."
                     ]
                 },
@@ -118,38 +228,127 @@
                     "title": "Tracking",
                     "content": [
                         "A tracking number will be sent via email after shipment.",
-                        "You can check the status via Japan Post Tracking Service.",
+                        "For Asia/Europe/Canada/UK: Track via Japan Post Tracking Service.",
+                        "For USA: Track via courier company website (DHL, FedEx, etc.).",
                         "Tracking is also available via your local postal service."
                     ]
                 },
                 {
                     "title": "Shipping Cost",
                     "content": [
-                        "Shipping costs are included in all product prices.",
-                        "Shipping will be displayed as 0 JPY at checkout."
+                        "All shipping costs are included in product prices.",
+                        "Shipping will be displayed as 0 JPY at checkout.",
+                        "No additional shipping fees at checkout."
                     ]
                 },
                 {
                     "title": "Shipping Destinations",
                     "content": [
                         "We currently ship to the following countries/regions:",
-                        "USA, Canada, UK, France, Germany, Italy, Spain",
-                        "Taiwan, China, South Korea, Thailand, Singapore",
+                        "Americas: USA, Canada",
+                        "Europe: UK, France, Germany, Italy, Spain, Netherlands, Belgium, Austria, Portugal, Ireland, Greece",
+                        "Asia: Taiwan, China, South Korea, Thailand, Singapore",
                         "Please contact us for shipping to other countries."
                     ]
                 },
                 {
-                    "title": "Customs & Import Taxes",
+                    "title": "Customs & Import Taxes ⚠️",
                     "content": [
-                        "Customs duties or import taxes may apply depending on the destination country.",
-                        "Customers are responsible for any customs and import taxes.",
-                        "Amounts vary by country regulations."
+                        "IMPORTANT: Customs duties and import taxes are NOT included in product prices.",
+                        "Customs duties or import taxes may apply depending on your country's regulations.",
+                        "All customs and import taxes are the buyer's responsibility.",
+                        "You will be required to pay these fees directly to customs or the delivery carrier upon receipt."
+                    ],
+                    "subsections": [
+                        {
+                            "title": "🇺🇸 USA",
+                            "content": [
+                                "No duty-free threshold (eliminated August 2025)",
+                                "All shipments subject to customs duties: 0-7%",
+                                "Processing fees: $5-30 per package",
+                                "Most figure imports from Japan: 0% duty + processing fees"
+                            ]
+                        },
+                        {
+                            "title": "🇨🇦 Canada",
+                            "content": [
+                                "Tax-free up to C$20 only",
+                                "Duty: 0-8% above threshold",
+                                "GST: 5% (always applied)",
+                                "PST/HST: 5-15% (varies by province)",
+                                "Typical total: 10-28% on most orders"
+                            ]
+                        },
+                        {
+                            "title": "🇬🇧 UK",
+                            "content": [
+                                "Tax-free up to £135 (until December 31, 2026)",
+                                "Duty: 0-4.5% above threshold",
+                                "VAT: 20% (on orders above £135)",
+                                "Note: Duty exemption will be removed by March 2029"
+                            ]
+                        },
+                        {
+                            "title": "🇪🇺 European Union",
+                            "content": [
+                                "Tax-free up to €150 (transitioning to full duty by 2028)",
+                                "Duty: 0-4.7%",
+                                "VAT: 19-27% (varies by country)",
+                                "Germany: 19%, France: 20%, Italy: 22%, Spain: 21%"
+                            ]
+                        },
+                        {
+                            "title": "🇨🇳 China",
+                            "content": [
+                                "Tax-free up to ¥50 only ($7 USD)",
+                                "Duty applies to almost all orders: 13-25%",
+                                "Customs clearance is strict"
+                            ]
+                        },
+                        {
+                            "title": "🇹🇼 Taiwan",
+                            "content": [
+                                "Tax-free up to NT$2,000 ($62 USD)",
+                                "Duty: 5-10% above threshold",
+                                "Relatively lenient customs"
+                            ]
+                        },
+                        {
+                            "title": "🇰🇷 South Korea",
+                            "content": [
+                                "Tax-free up to $150",
+                                "Duty: 8%",
+                                "VAT: 10%",
+                                "Typical total: 18% on orders above $150"
+                            ]
+                        },
+                        {
+                            "title": "🇹🇭 Thailand",
+                            "content": [
+                                "Tax-free up to ฿1,500 ($43 USD)",
+                                "Duty: 0-30% (varies significantly)",
+                                "VAT: 7%",
+                                "Customs enforcement varies"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "Important Notes",
+                    "content": [
+                        "The above information is accurate as of February 2026.",
+                        "Customs regulations change frequently - please check with your local customs for the latest information.",
+                        "If you refuse to pay customs fees, the item will be returned to us.",
+                        "Return shipping costs and re-shipment fees will be charged to the customer.",
+                        "We are not responsible for any customs-related delays or confiscations.",
+                        "Processing fees charged by carriers are separate from duties and taxes."
                     ]
                 },
                 {
                     "title": "Undeliverable Items",
                     "content": [
                         "Items returned due to unknown address or refusal of receipt will be returned to us.",
+                        "Items returned due to refusal to pay customs duties will be subject to restocking fees.",
                         "Additional shipping fees are required for reshipment.",
                         "This also applies to returns due to long-term absence."
                     ]
@@ -157,8 +356,13 @@
                 {
                     "title": "Shipping Inquiries",
                     "content": [
-                        "Please contact japan.anime.shoten@gmail.com.",
-                        "Include your tracking number and order number."
+                        "Please contact: japan.anime.shoten@gmail.com",
+                        "Include the following information:",
+                        "Your order number",
+                        "Tracking number",
+                        "Description of the issue",
+                        "Business Hours: Weekdays 10:00-18:00 (Japan Time)",
+                        "Closed: Weekends and Japanese national holidays"
                     ]
                 }
             ]

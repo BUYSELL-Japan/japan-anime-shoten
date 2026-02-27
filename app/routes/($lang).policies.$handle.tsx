@@ -99,6 +99,24 @@ export default function PolicyPage() {
                             ) : (
                                 <p>{section.content}</p>
                             )}
+                            {Array.isArray(section.subsections) && section.subsections.map((sub: any, si: number) => (
+                                <div key={si} style={{ marginTop: "20px", marginLeft: "10px", paddingLeft: "15px", borderLeft: "3px solid #e0e0e0" }}>
+                                    {sub.title && (
+                                        <h3 style={{ fontSize: "1.15rem", fontWeight: "600", marginBottom: "10px", color: "#444" }}>
+                                            {sub.title}
+                                        </h3>
+                                    )}
+                                    {Array.isArray(sub.content) ? (
+                                        <ul style={{ paddingLeft: "20px", margin: 0 }}>
+                                            {sub.content.map((line: string, li: number) => (
+                                                <li key={li} style={{ marginBottom: "6px" }}>{line}</li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p>{sub.content}</p>
+                                    )}
+                                </div>
+                            ))}
                         </div>
                     ))}
                 </div>
