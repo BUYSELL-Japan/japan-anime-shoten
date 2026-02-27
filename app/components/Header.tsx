@@ -2,6 +2,7 @@ import { Form, Link, useLocation, useParams, useNavigate } from "@remix-run/reac
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import CurrencySelector from "./CurrencySelector";
+import SearchBar from "./SearchBar";
 
 import { useCart } from "~/context/CartContext";
 
@@ -110,7 +111,7 @@ export default function Header({ currentCurrency }: { currentCurrency?: string }
                     {/* Currency Selector */}
                     <CurrencySelector currentCurrency={currentCurrency || 'JPY'} />
 
-                    <button style={{ fontWeight: "600", border: "none", background: "none", cursor: "pointer" }}>{t('search')}</button>
+                    <SearchBar />
                     <button
                         className={`btn-primary ${isAnimating ? "cart-added-animation" : ""}`}
                         style={{ padding: "8px 16px", fontSize: "0.9rem" }}
