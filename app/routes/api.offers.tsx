@@ -66,7 +66,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
                                     <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Offer Price</td><td style="padding:8px;border:1px solid #ddd;">${currency || 'JPY'} ${offerPrice} (${percentage}%)</td></tr>
                                     <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Customer</td><td style="padding:8px;border:1px solid #ddd;">${customerName || 'N/A'} (${customerEmail})</td></tr>
                                 </table>
-                                <p style="margin-top:20px;">Manage this offer in your admin dashboard.</p>
+                                <div style="margin-top:24px;">
+                                    <a href="https://japan-anime-shoten.pages.dev/admin/offer?id=${id}&key=jas-admin-2026&action=approve" style="display:inline-block;background:#22c55e;color:white;padding:14px 28px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:16px;margin-right:12px;">✅ Approve</a>
+                                    <a href="https://japan-anime-shoten.pages.dev/admin/offer?id=${id}&key=jas-admin-2026&action=reject" style="display:inline-block;background:#ef4444;color:white;padding:14px 28px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:16px;">❌ Reject</a>
+                                </div>
                             `,
                         }),
                     });
