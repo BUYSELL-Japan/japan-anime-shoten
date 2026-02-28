@@ -457,16 +457,38 @@ export default function ProductDetail() {
                         var productId = "${product.id.replace('gid://shopify/Product/', '')}";
                         var shop = "japan-anime-shoten-3.myshopify.com";
                         
-                        // Remove existing widget script if any (for client-side navigation)
+                        // Remove existing widget if any (for client-side navigation)
                         var existing = document.getElementById('bargain-widget-script');
                         if (existing) existing.remove();
+                        var existingCss = document.getElementById('bargain-widget-css');
+                        if (existingCss) existingCss.remove();
                         
-                        // Load Bargain widget
+                        // Initialize Bargain config
+                        window.bargain = {
+                          config: {
+                            shopSetting: {
+                              publicDomain: shop,
+                              moneyFormat: "¥{{amount}}",
+                              currency: "JPY",
+                              proxyPath: "apps/bargain"
+                            }
+                          },
+                          widgetJsPath: "https://bargain.startexecution.app/app/bargain-widget.bundle.js",
+                          widgetCssPath: "https://bargain.startexecution.app/content/bargain-widget.css",
+                          productId: productId
+                        };
+                        
+                        // Load CSS
+                        var css = document.createElement('link');
+                        css.id = 'bargain-widget-css';
+                        css.rel = 'stylesheet';
+                        css.href = 'https://bargain.startexecution.app/content/bargain-widget.css';
+                        document.head.appendChild(css);
+                        
+                        // Load Widget JS
                         var s = document.createElement('script');
                         s.id = 'bargain-widget-script';
-                        s.src = 'https://pricemate.app/widget.js';
-                        s.setAttribute('data-product-id', productId);
-                        s.setAttribute('data-shop', shop);
+                        s.src = 'https://bargain.startexecution.app/app/bargain-widget.bundle.js';
                         s.async = true;
                         document.getElementById('bargain-make-offer').appendChild(s);
                       })();
