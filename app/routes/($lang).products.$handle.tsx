@@ -447,6 +447,35 @@ export default function ProductDetail() {
               </button>
             </div>
 
+            {/* Bargain - Make an Offer Widget */}
+            {isAvailable && (
+              <div id="bargain-make-offer" style={{ marginTop: "15px", maxWidth: "400px" }}>
+                <script
+                  dangerouslySetInnerHTML={{
+                    __html: `
+                      (function() {
+                        var productId = "${product.id.replace('gid://shopify/Product/', '')}";
+                        var shop = "japan-anime-shoten-3.myshopify.com";
+                        
+                        // Remove existing widget script if any (for client-side navigation)
+                        var existing = document.getElementById('bargain-widget-script');
+                        if (existing) existing.remove();
+                        
+                        // Load Bargain widget
+                        var s = document.createElement('script');
+                        s.id = 'bargain-widget-script';
+                        s.src = 'https://pricemate.app/widget.js';
+                        s.setAttribute('data-product-id', productId);
+                        s.setAttribute('data-shop', shop);
+                        s.async = true;
+                        document.getElementById('bargain-make-offer').appendChild(s);
+                      })();
+                    `,
+                  }}
+                />
+              </div>
+            )}
+
             <div style={{ marginTop: "30px", fontSize: "0.9rem", color: "#666" }}>
               <p>{t("text_free_shipping")}</p>
               <p>{t("text_auth_guarantee")}</p>
