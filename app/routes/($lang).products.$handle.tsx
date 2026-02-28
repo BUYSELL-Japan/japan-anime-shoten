@@ -206,8 +206,80 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
   }
 }
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useCart } from "~/context/CartContext";
+
+declare global {
+  interface Window {
+    Shopify?: any;
+    bargain?: any;
+  }
+}
+
+function BargainWidget({ productId }: { productId: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const shop = "japan-anime-shoten-3.myshopify.com";
+
+    // Set window.Shopify for the widget
+    if (!window.Shopify) {
+      window.Shopify = {};
+    }
+    window.Shopify.shop = shop;
+
+    // Initialize Bargain config
+    window.bargain = {
+      config: {
+        shopSetting: {
+          publicDomain: shop,
+          moneyFormat: "¥{{amount}}",
+          currency: "JPY",
+          proxyPath: "apps/bargain"
+        }
+      },
+      widgetJsPath: "https://bargain.startexecution.app/app/bargain-widget.bundle.js",
+      widgetCssPath: "https://bargain.startexecution.app/content/bargain-widget.css",
+      productId: productId
+    };
+
+    // Load CSS (only once)
+    if (!document.getElementById('bargain-widget-css')) {
+      const css = document.createElement('link');
+      css.id = 'bargain-widget-css';
+      css.rel = 'stylesheet';
+      css.href = 'https://bargain.startexecution.app/content/bargain-widget.css';
+      document.head.appendChild(css);
+    }
+
+    // Remove existing script (for re-initialization on product change)
+    const existing = document.getElementById('bargain-widget-script');
+    if (existing) existing.remove();
+
+    // Load Widget JS
+    const script = document.createElement('script');
+    script.id = 'bargain-widget-script';
+    script.src = 'https://bargain.startexecution.app/app/bargain-widget.bundle.js';
+    script.async = true;
+    containerRef.current.appendChild(script);
+
+    return () => {
+      // Cleanup on unmount
+      const s = document.getElementById('bargain-widget-script');
+      if (s) s.remove();
+    };
+  }, [productId]);
+
+  return (
+    <div
+      ref={containerRef}
+      id="bargain-make-offer"
+      style={{ marginTop: "15px", maxWidth: "400px" }}
+    />
+  );
+}
 
 export default function ProductDetail() {
   const { product, detectedCurrency } = useLoaderData<typeof loader>();
@@ -449,53 +521,7 @@ export default function ProductDetail() {
 
             {/* Bargain - Make an Offer Widget */}
             {isAvailable && (
-              <div id="bargain-make-offer" style={{ marginTop: "15px", maxWidth: "400px" }}>
-                <script
-                  dangerouslySetInnerHTML={{
-                    __html: `
-                      (function() {
-                        var productId = "${product.id.replace('gid://shopify/Product/', '')}";
-                        var shop = "japan-anime-shoten-3.myshopify.com";
-                        
-                        // Remove existing widget if any (for client-side navigation)
-                        var existing = document.getElementById('bargain-widget-script');
-                        if (existing) existing.remove();
-                        var existingCss = document.getElementById('bargain-widget-css');
-                        if (existingCss) existingCss.remove();
-                        
-                        // Initialize Bargain config
-                        window.bargain = {
-                          config: {
-                            shopSetting: {
-                              publicDomain: shop,
-                              moneyFormat: "¥{{amount}}",
-                              currency: "JPY",
-                              proxyPath: "apps/bargain"
-                            }
-                          },
-                          widgetJsPath: "https://bargain.startexecution.app/app/bargain-widget.bundle.js",
-                          widgetCssPath: "https://bargain.startexecution.app/content/bargain-widget.css",
-                          productId: productId
-                        };
-                        
-                        // Load CSS
-                        var css = document.createElement('link');
-                        css.id = 'bargain-widget-css';
-                        css.rel = 'stylesheet';
-                        css.href = 'https://bargain.startexecution.app/content/bargain-widget.css';
-                        document.head.appendChild(css);
-                        
-                        // Load Widget JS
-                        var s = document.createElement('script');
-                        s.id = 'bargain-widget-script';
-                        s.src = 'https://bargain.startexecution.app/app/bargain-widget.bundle.js';
-                        s.async = true;
-                        document.getElementById('bargain-make-offer').appendChild(s);
-                      })();
-                    `,
-                  }}
-                />
-              </div>
+              <BargainWidget productId={product.id.replace('gid://shopify/Product/', '')} />
             )}
 
             <div style={{ marginTop: "30px", fontSize: "0.9rem", color: "#666" }}>
