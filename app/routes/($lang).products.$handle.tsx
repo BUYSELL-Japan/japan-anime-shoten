@@ -195,7 +195,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
     const inventoryQuantity = product.variants.edges[0]?.node?.quantityAvailable;
 
     return json({
-      product: { ...product, formattedPrice: `${currencySymbol}${formattedPrice}`, currencyCode, inventoryQuantity },
+      product: { ...product, formattedPrice: `${currencySymbol}${formattedPrice}`, currencyCode, inventoryQuantity, rawPrice: amount, currencySymbol, handle },
       locale,
       detectedCountry,
       detectedCurrency
@@ -206,87 +206,17 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
   }
 }
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "~/context/CartContext";
-
-declare global {
-  interface Window {
-    Shopify?: any;
-    bargain?: any;
-  }
-}
-
-function BargainWidget({ productId }: { productId: string }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const shop = "japan-anime-shoten-3.myshopify.com";
-
-    // Set window.Shopify for the widget
-    if (!window.Shopify) {
-      window.Shopify = {};
-    }
-    window.Shopify.shop = shop;
-
-    // Initialize Bargain config
-    window.bargain = {
-      config: {
-        shopSetting: {
-          publicDomain: shop,
-          moneyFormat: "¥{{amount}}",
-          currency: "JPY",
-          proxyPath: "apps/bargain"
-        }
-      },
-      widgetJsPath: "https://bargain.startexecution.app/app/bargain-widget.bundle.js",
-      widgetCssPath: "https://bargain.startexecution.app/content/bargain-widget.css",
-      productId: productId
-    };
-
-    // Load CSS (only once)
-    if (!document.getElementById('bargain-widget-css')) {
-      const css = document.createElement('link');
-      css.id = 'bargain-widget-css';
-      css.rel = 'stylesheet';
-      css.href = 'https://bargain.startexecution.app/content/bargain-widget.css';
-      document.head.appendChild(css);
-    }
-
-    // Remove existing script (for re-initialization on product change)
-    const existing = document.getElementById('bargain-widget-script');
-    if (existing) existing.remove();
-
-    // Load Widget JS
-    const script = document.createElement('script');
-    script.id = 'bargain-widget-script';
-    script.src = 'https://bargain.startexecution.app/app/bargain-widget.bundle.js';
-    script.async = true;
-    containerRef.current.appendChild(script);
-
-    return () => {
-      // Cleanup on unmount
-      const s = document.getElementById('bargain-widget-script');
-      if (s) s.remove();
-    };
-  }, [productId]);
-
-  return (
-    <div
-      ref={containerRef}
-      id="bargain-make-offer"
-      style={{ marginTop: "15px", maxWidth: "400px" }}
-    />
-  );
-}
+import MakeOfferModal from "~/components/MakeOfferModal";
 
 export default function ProductDetail() {
-  const { product, detectedCurrency } = useLoaderData<typeof loader>();
+  const { product, detectedCurrency, locale } = useLoaderData<typeof loader>();
   const { t } = useTranslation();
   const navigation = useNavigation();
   const { addToCart, isLoading } = useCart();
   const isSubmitting = navigation.state === "submitting";
+  const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
 
   // State for the currently selected main image
   // Default to the first image or a placeholder
@@ -519,10 +449,48 @@ export default function ProductDetail() {
               </button>
             </div>
 
-            {/* Bargain - Make an Offer Widget */}
+            {/* Make an Offer */}
             {isAvailable && (
-              <BargainWidget productId={product.id.replace('gid://shopify/Product/', '')} />
+              <div style={{ marginTop: "15px", maxWidth: "400px" }}>
+                <button
+                  onClick={() => setIsOfferModalOpen(true)}
+                  style={{
+                    padding: "14px",
+                    fontSize: "1.05rem",
+                    width: "100%",
+                    background: "transparent",
+                    color: "var(--color-primary, #e63946)",
+                    border: "2px solid var(--color-primary, #e63946)",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    fontWeight: "600",
+                    transition: "all 0.2s",
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background = "var(--color-primary, #e63946)";
+                    e.currentTarget.style.color = "white";
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background = "transparent";
+                    e.currentTarget.style.color = "var(--color-primary, #e63946)";
+                  }}
+                >
+                  {t("make_offer", { defaultValue: "Make an Offer" })}
+                </button>
+              </div>
             )}
+
+            <MakeOfferModal
+              isOpen={isOfferModalOpen}
+              onClose={() => setIsOfferModalOpen(false)}
+              productId={product.id.replace('gid://shopify/Product/', '')}
+              productTitle={product.title}
+              productHandle={product.handle || ''}
+              originalPrice={product.rawPrice}
+              currency={product.currencyCode}
+              currencySymbol={product.currencySymbol}
+              lang={locale}
+            />
 
             <div style={{ marginTop: "30px", fontSize: "0.9rem", color: "#666" }}>
               <p>{t("text_free_shipping")}</p>
