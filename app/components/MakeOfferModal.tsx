@@ -58,7 +58,7 @@ export default function MakeOfferModal({
         }
 
         try {
-            const res = await fetch(`/${lang}/api/offers`, {
+            const res = await fetch(`/api/offers`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
