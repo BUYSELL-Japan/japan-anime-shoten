@@ -55,7 +55,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                            from: 'Japan Anime Shoten <onboarding@resend.dev>',
+                            from: 'Japan Anime Shoten <offers@japan-anime-shoten.com>',
                             to: ['japan.anime.shoten@gmail.com'],
                             subject: `New Offer: ${productTitle} - ${currency || 'JPY'} ${offerPrice}`,
                             html: `
@@ -181,7 +181,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                            from: 'Japan Anime Shoten <onboarding@resend.dev>',
+                            from: 'Japan Anime Shoten <offers@japan-anime-shoten.com>',
                             to: [(offer as any).customer_email],
                             subject: `Your Offer Was Accepted! - ${(offer as any).product_title}`,
                             html: `
@@ -220,7 +220,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                            from: 'Japan Anime Shoten <onboarding@resend.dev>',
+                            from: 'Japan Anime Shoten <offers@japan-anime-shoten.com>',
                             to: [(offer as any).customer_email],
                             subject: `Offer Update - ${(offer as any).product_title}`,
                             html: `
