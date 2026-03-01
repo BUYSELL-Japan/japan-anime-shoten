@@ -566,15 +566,16 @@ export default function ProductDetail() {
               }}
             >
               {(recommendations as any[]).map((rec: any) => (
-                <Link
+                <a
                   key={rec.id}
-                  to={`/${locale}/products/${rec.handle}`}
+                  href={`/${locale}/products/${rec.handle}`}
                   style={{
                     flexShrink: 0,
                     width: "160px",
                     textDecoration: "none",
                     color: "inherit",
                     scrollSnapAlign: "start",
+                    display: "block",
                   }}
                 >
                   <div
@@ -612,7 +613,7 @@ export default function ProductDetail() {
                   <p style={{ fontSize: "0.9rem", fontWeight: "700", color: "var(--color-primary, #e63946)" }}>
                     {rec.formattedPrice}
                   </p>
-                </Link>
+                </a>
               ))}
             </div>
           </section>
