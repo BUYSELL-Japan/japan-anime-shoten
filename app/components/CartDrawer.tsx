@@ -130,21 +130,14 @@ export default function CartDrawer() {
                 {cart && cart.lines.edges.length > 0 && (
                     <div style={{ padding: "20px", borderTop: "1px solid #eee", background: "#f9f9f9" }}>
                         {saleActive && (
-                            <div style={{ marginBottom: "10px", padding: "8px 12px", background: "linear-gradient(135deg, #fff5f5, #ffe0e0)", borderRadius: "6px", border: "1px dashed #e63946" }}>
-                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", color: "#666" }}>
-                                    <span>Subtotal</span>
-                                    <span>{currencySymbol}{totalAmount.toLocaleString()}</span>
-                                </div>
-                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", color: "#e63946", fontWeight: "600", marginTop: "4px" }}>
-                                    <span>🔥 Sale -{SALE_CONFIG.discountPercent}%</span>
-                                    <span>-{currencySymbol}{(totalAmount - discountedTotal).toLocaleString()}</span>
-                                </div>
+                            <div style={{ marginBottom: "10px", padding: "6px 12px", background: "linear-gradient(135deg, #fff5f5, #ffe0e0)", borderRadius: "6px", border: "1px dashed #e63946", textAlign: "center", fontSize: "0.85rem", color: "#e63946", fontWeight: "600" }}>
+                                🔥 {SALE_CONFIG.discountPercent}% OFF Sale Applied
                             </div>
                         )}
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px", fontWeight: "700", fontSize: "1.1rem" }}>
                             <span>Total</span>
                             <span style={{ color: saleActive ? "#e63946" : "inherit" }}>
-                                {currencySymbol}{(saleActive ? discountedTotal : totalAmount).toLocaleString()}
+                                {currencySymbol}{totalAmount.toLocaleString()}
                             </span>
                         </div>
                         <a
