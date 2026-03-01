@@ -1,6 +1,7 @@
 import { Link, useParams } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
+import { isSaleActive, getSalePrice, SALE_CONFIG } from "~/utils/saleConfig";
 
 export interface Product {
     id: string;
@@ -67,8 +68,18 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
         }
     };
 
-    const isAvailable = product.availableForSale !== false; // Default to true if undefined
+    const isAvailable = product.availableForSale !== false;
     const isOnlyOneLeft = product.inventoryQuantity === 1;
+    const [saleActive, setSaleActive] = useState(false);
+
+    useEffect(() => {
+        setSaleActive(isSaleActive());
+    }, []);
+
+    // Parse price number from formatted string
+    const priceNum = parseFloat(product.price.replace(/[^0-9.]/g, ''));
+    const salePrice = getSalePrice(priceNum);
+    const currencyPrefix = product.price.replace(/[0-9.,\s]/g, '');
 
     return (
         <div
@@ -86,6 +97,26 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
         >
             <Link to={`/${currentLang}/products/${product.handle || '#'}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
                 <div className="product-image-container" style={{ position: "relative", overflow: "hidden", background: "#f9f9f9", aspectRatio: "1/1" }}>
+                    {/* Sale Badge */}
+                    {saleActive && isAvailable && (
+                        <div style={{
+                            position: "absolute",
+                            top: "8px",
+                            left: "8px",
+                            background: "linear-gradient(135deg, #e63946, #ff6b6b)",
+                            color: "white",
+                            padding: "4px 10px",
+                            borderRadius: "4px",
+                            fontSize: "0.75rem",
+                            fontWeight: "800",
+                            zIndex: 3,
+                            boxShadow: "0 2px 8px rgba(230,57,70,0.4)",
+                            animation: "salePulse 2s ease-in-out infinite",
+                            letterSpacing: "0.5px",
+                        }}>
+                            {SALE_CONFIG.discountPercent}% OFF
+                        </div>
+                    )}
                     <img
                         src={product.image}
                         alt={product.title}
@@ -131,10 +162,22 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                         </div>
                     )}
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        {/* Suppress hydration warning for price as it might differ between server (formatted) and client */}
-                        <span suppressHydrationWarning style={{ fontSize: "1.1rem", fontWeight: "700", color: isAvailable ? "var(--color-primary)" : "#999" }}>
-                            {product.price}
-                        </span>
+                        <div>
+                            {saleActive && isAvailable ? (
+                                <>
+                                    <span style={{ fontSize: "0.85rem", color: "#999", textDecoration: "line-through", marginRight: "6px" }}>
+                                        {product.price}
+                                    </span>
+                                    <span suppressHydrationWarning style={{ fontSize: "1.1rem", fontWeight: "700", color: "#e63946" }}>
+                                        {currencyPrefix}{salePrice.toLocaleString()}
+                                    </span>
+                                </>
+                            ) : (
+                                <span suppressHydrationWarning style={{ fontSize: "1.1rem", fontWeight: "700", color: isAvailable ? "var(--color-primary)" : "#999" }}>
+                                    {product.price}
+                                </span>
+                            )}
+                        </div>
                         <div style={{ color: "#f5a623", fontSize: "0.9rem" }}>★ {product.rating}</div>
                     </div>
                 </div>

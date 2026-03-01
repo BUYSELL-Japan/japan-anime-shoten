@@ -282,6 +282,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
 import Header from "~/components/Header";
 import Footer from "~/components/Footer";
 import CollectionSlider from "~/components/CollectionSlider";
+import SaleCountdown from "~/components/SaleCountdown";
 
 export default function Index() {
   const { collections, featuredProducts, newArrivals, detectedCurrency } = useLoaderData<typeof loader>();
@@ -298,6 +299,7 @@ export default function Index() {
 
       <main style={{ flex: 1 }}>
         <Hero />
+        <SaleCountdown />
         <CollectionSlider collections={collections} />
         <NewArrivals products={newArrivals} />
         <TrustBadges />

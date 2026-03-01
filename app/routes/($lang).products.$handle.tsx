@@ -260,6 +260,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
 import { useState, useEffect } from "react";
 import { useCart } from "~/context/CartContext";
 import MakeOfferModal from "~/components/MakeOfferModal";
+import { isSaleActive, getSalePrice, SALE_CONFIG } from "~/utils/saleConfig";
 
 export default function ProductDetail() {
   const { product, detectedCurrency, locale, recommendations } = useLoaderData<typeof loader>();
@@ -268,6 +269,11 @@ export default function ProductDetail() {
   const { addToCart, isLoading } = useCart();
   const isSubmitting = navigation.state === "submitting";
   const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
+  const [saleActive, setSaleActive] = useState(false);
+
+  useEffect(() => {
+    setSaleActive(isSaleActive());
+  }, []);
 
   // State for the currently selected main image
   // Default to the first image or a placeholder
@@ -432,10 +438,32 @@ export default function ProductDetail() {
           {/* Details */}
           <div>
             <h1 style={{ fontSize: "2rem", fontWeight: "700", marginBottom: "10px" }}>{product.title}</h1>
-            <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "20px" }}>
-              <div style={{ fontSize: "1.5rem", fontWeight: "600", color: isAvailable ? "var(--color-primary)" : "#999" }}>
-                {price}
-              </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "20px", flexWrap: "wrap" }}>
+              {saleActive && isAvailable ? (
+                <>
+                  <div style={{ fontSize: "1.1rem", color: "#999", textDecoration: "line-through" }}>
+                    {price}
+                  </div>
+                  <div style={{ fontSize: "1.5rem", fontWeight: "700", color: "#e63946" }}>
+                    {product.currencySymbol}{getSalePrice(product.rawPrice).toLocaleString()}
+                  </div>
+                  <span style={{
+                    background: "linear-gradient(135deg, #e63946, #ff6b6b)",
+                    color: "white",
+                    padding: "4px 12px",
+                    borderRadius: "4px",
+                    fontSize: "0.85rem",
+                    fontWeight: "800",
+                    animation: "salePulse 2s ease-in-out infinite",
+                  }}>
+                    {SALE_CONFIG.discountPercent}% OFF
+                  </span>
+                </>
+              ) : (
+                <div style={{ fontSize: "1.5rem", fontWeight: "600", color: isAvailable ? "var(--color-primary)" : "#999" }}>
+                  {price}
+                </div>
+              )}
               {!isAvailable && (
                 <span style={{
                   background: "#666",

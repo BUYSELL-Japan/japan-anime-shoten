@@ -193,3 +193,56 @@ button {
   animation: cart-pop 0.5s ease;
   background-color: var(--color-primary-dark) !important;
 }
+
+/* Sale Animations */
+@keyframes saleBannerScroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.sale-banner-scroll {
+  display: inline-block;
+  white-space: nowrap;
+  animation: saleBannerScroll 20s linear infinite;
+}
+
+@keyframes salePulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.03);
+    opacity: 0.9;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

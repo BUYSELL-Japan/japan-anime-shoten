@@ -61,6 +61,7 @@ export let handle = {
 
 import { CartProvider } from "./context/CartContext";
 import CartDrawer from "./components/CartDrawer";
+import SalePopup from "./components/SalePopup";
 import { useEffect } from "react";
 
 export default function App() {
@@ -116,6 +117,7 @@ export default function App() {
                 <CartProvider>
                     <Outlet />
                     <CartDrawer />
+                    <SalePopup />
                 </CartProvider>
                 <ScrollRestoration />
                 <Scripts />

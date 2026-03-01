@@ -1,11 +1,17 @@
 import { Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { useCart } from "~/context/CartContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { isSaleActive, SALE_CONFIG } from "~/utils/saleConfig";
 
 export default function CartDrawer() {
     const { cart, isOpen, closeCart, removeFromCart, updateLine, isLoading } = useCart();
     const { t } = useTranslation();
+    const [saleActive, setSaleActive] = useState(false);
+
+    useEffect(() => {
+        setSaleActive(isSaleActive());
+    }, []);
 
     // Prevent scrolling when cart is open
     useEffect(() => {
@@ -20,6 +26,10 @@ export default function CartDrawer() {
     }, [isOpen]);
 
     if (!isOpen) return null;
+
+    const totalAmount = cart ? Number(cart.estimatedCost.totalAmount.amount) : 0;
+    const currencySymbol = cart?.estimatedCost.totalAmount.currencyCode === 'JPY' ? '¥' : '$';
+    const discountedTotal = saleActive ? Math.round(totalAmount * (1 - SALE_CONFIG.discountPercent / 100) * 100) / 100 : totalAmount;
 
     return (
         <div style={{ position: "fixed", inset: 0, zIndex: 1000, display: "flex", justifyContent: "flex-end" }}>
@@ -119,11 +129,22 @@ export default function CartDrawer() {
                 {/* Footer */}
                 {cart && cart.lines.edges.length > 0 && (
                     <div style={{ padding: "20px", borderTop: "1px solid #eee", background: "#f9f9f9" }}>
+                        {saleActive && (
+                            <div style={{ marginBottom: "10px", padding: "8px 12px", background: "linear-gradient(135deg, #fff5f5, #ffe0e0)", borderRadius: "6px", border: "1px dashed #e63946" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", color: "#666" }}>
+                                    <span>Subtotal</span>
+                                    <span>{currencySymbol}{totalAmount.toLocaleString()}</span>
+                                </div>
+                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", color: "#e63946", fontWeight: "600", marginTop: "4px" }}>
+                                    <span>🔥 Sale -{SALE_CONFIG.discountPercent}%</span>
+                                    <span>-{currencySymbol}{(totalAmount - discountedTotal).toLocaleString()}</span>
+                                </div>
+                            </div>
+                        )}
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px", fontWeight: "700", fontSize: "1.1rem" }}>
                             <span>Total</span>
-                            <span>
-                                {cart.estimatedCost.totalAmount.currencyCode === 'JPY' ? '¥' : '$'}
-                                {Number(cart.estimatedCost.totalAmount.amount).toLocaleString()}
+                            <span style={{ color: saleActive ? "#e63946" : "inherit" }}>
+                                {currencySymbol}{(saleActive ? discountedTotal : totalAmount).toLocaleString()}
                             </span>
                         </div>
                         <a
