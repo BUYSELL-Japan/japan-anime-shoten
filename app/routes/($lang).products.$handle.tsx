@@ -551,7 +551,7 @@ export default function ProductDetail() {
         </div>
         {/* Related Products */}
         {recommendations && recommendations.length > 0 && (
-          <section style={{ marginTop: "60px", paddingTop: "40px", borderTop: "1px solid #eee" }}>
+          <section style={{ marginTop: "20px", paddingTop: "20px", borderTop: "1px solid #eee" }}>
             <h2 style={{ fontSize: "1.4rem", fontWeight: "700", marginBottom: "24px" }}>
               {t("related_products", { defaultValue: "You May Also Like" })}
             </h2>
