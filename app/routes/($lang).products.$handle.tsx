@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from "@remix-run/cloudflare";
 import { json, redirect } from "@remix-run/cloudflare";
-import { Form, useLoaderData, useNavigation } from "@remix-run/react";
+import { Form, useLoaderData, useNavigation, Link } from "@remix-run/react";
 import { shopifyFetch } from "~/utils/shopify.server";
 import i18next from "~/i18n.server";
 import Header from "~/components/Header";
@@ -156,23 +156,63 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
 
   const variables = { handle };
 
+  // Related products query
+  const RECOMMENDATIONS_QUERY = `
+    query productRecommendations($productId: ID!) {
+      productRecommendations(productId: $productId) {
+        id
+        title
+        handle
+        availableForSale
+        priceRange {
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+        }
+        images(first: 1) {
+          edges {
+            node {
+              url
+              altText
+            }
+          }
+        }
+      }
+    }
+  `;
+
   try {
     const { product } = await shopifyFetch({
       query: QUERY,
       variables,
       context,
       language: locale,
-      country: detectedCountry // Pass locale to get translated data from Shopify
+      country: detectedCountry
     });
 
     if (!product) {
       throw new Response("Not Found", { status: 404 });
     }
 
+    // Fetch recommendations
+    let recommendations: any[] = [];
+    try {
+      const recData = await shopifyFetch({
+        query: RECOMMENDATIONS_QUERY,
+        variables: { productId: product.id },
+        context,
+        language: locale,
+        country: detectedCountry
+      });
+      recommendations = (recData.productRecommendations || []).slice(0, 8);
+    } catch (e) {
+      console.error("Failed to fetch recommendations:", e);
+    }
+
     const currencyCode = product.priceRange.minVariantPrice.currencyCode;
     const amount = parseFloat(product.priceRange.minVariantPrice.amount);
 
-    // Currency symbol mapping
     const currencySymbols: Record<string, string> = {
       'USD': '$',
       'JPY': '¥',
@@ -187,15 +227,26 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
 
     const currencySymbol = currencySymbols[currencyCode] || currencyCode;
 
-    // Format price based on currency
     const formattedPrice = ['JPY', 'KRW', 'TWD', 'THB', 'CNY'].includes(currencyCode)
       ? amount.toLocaleString('ja-JP', { maximumFractionDigits: 0 })
       : amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     const inventoryQuantity = product.variants.edges[0]?.node?.quantityAvailable;
 
+    // Format recommendation prices
+    const formattedRecommendations = recommendations.map((rec: any) => {
+      const recAmount = parseFloat(rec.priceRange.minVariantPrice.amount);
+      const recCurrency = rec.priceRange.minVariantPrice.currencyCode;
+      const recSymbol = currencySymbols[recCurrency] || recCurrency;
+      const recFormatted = ['JPY', 'KRW', 'TWD', 'THB', 'CNY'].includes(recCurrency)
+        ? recAmount.toLocaleString('ja-JP', { maximumFractionDigits: 0 })
+        : recAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      return { ...rec, formattedPrice: `${recSymbol}${recFormatted}` };
+    });
+
     return json({
       product: { ...product, formattedPrice: `${currencySymbol}${formattedPrice}`, currencyCode, inventoryQuantity, rawPrice: amount, currencySymbol, handle },
+      recommendations: formattedRecommendations,
       locale,
       detectedCountry,
       detectedCurrency
@@ -211,7 +262,7 @@ import { useCart } from "~/context/CartContext";
 import MakeOfferModal from "~/components/MakeOfferModal";
 
 export default function ProductDetail() {
-  const { product, detectedCurrency, locale } = useLoaderData<typeof loader>();
+  const { product, detectedCurrency, locale, recommendations } = useLoaderData<typeof loader>();
   const { t } = useTranslation();
   const navigation = useNavigation();
   const { addToCart, isLoading } = useCart();
@@ -498,6 +549,74 @@ export default function ProductDetail() {
             </div>
           </div>
         </div>
+        {/* Related Products */}
+        {recommendations && recommendations.length > 0 && (
+          <section style={{ marginTop: "60px", paddingTop: "40px", borderTop: "1px solid #eee" }}>
+            <h2 style={{ fontSize: "1.4rem", fontWeight: "700", marginBottom: "24px" }}>
+              {t("related_products", { defaultValue: "You May Also Like" })}
+            </h2>
+            <div
+              style={{
+                display: "flex",
+                gap: "16px",
+                overflowX: "auto",
+                paddingBottom: "16px",
+                scrollSnapType: "x mandatory",
+                WebkitOverflowScrolling: "touch",
+              }}
+            >
+              {(recommendations as any[]).map((rec: any) => (
+                <Link
+                  key={rec.id}
+                  to={`/${locale}/products/${rec.handle}`}
+                  style={{
+                    flexShrink: 0,
+                    width: "160px",
+                    textDecoration: "none",
+                    color: "inherit",
+                    scrollSnapAlign: "start",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "160px",
+                      height: "160px",
+                      borderRadius: "8px",
+                      overflow: "hidden",
+                      backgroundColor: "#f5f5f5",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    <img
+                      src={rec.images?.edges?.[0]?.node?.url || "/placeholder.png"}
+                      alt={rec.title}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      loading="lazy"
+                    />
+                  </div>
+                  <p
+                    style={{
+                      fontSize: "0.85rem",
+                      fontWeight: "500",
+                      lineHeight: "1.3",
+                      marginBottom: "4px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                    }}
+                  >
+                    {rec.title}
+                  </p>
+                  <p style={{ fontSize: "0.9rem", fontWeight: "700", color: "var(--color-primary, #e63946)" }}>
+                    {rec.formattedPrice}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
 
       <Footer />
