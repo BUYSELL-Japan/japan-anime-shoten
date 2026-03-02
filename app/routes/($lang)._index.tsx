@@ -175,6 +175,54 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
     }
   `;
 
+  // Separate query for Sale collection
+  const SALE_QUERY = `
+    query SaleCollection {
+      collection(handle: "sale") {
+        id
+        title
+        handle
+        products(first: 10, sortKey: CREATED_AT, reverse: true) {
+          edges {
+            node {
+              id
+              title
+              handle
+              availableForSale
+              priceRange {
+                minVariantPrice {
+                  amount
+                  currencyCode
+                }
+              }
+              compareAtPriceRange {
+                minVariantPrice {
+                  amount
+                  currencyCode
+                }
+              }
+              variants(first: 1) {
+                edges {
+                  node {
+                    id
+                    quantityAvailable
+                  }
+                }
+              }
+              images(first: 1) {
+                edges {
+                  node {
+                    url
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
   try {
     const shopifyData = await shopifyFetch({
       query: QUERY,
@@ -187,22 +235,21 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
     console.log(`[Loader] Fetched ${shopifyData.featured.edges.length} featured products`);
     console.log(`[Loader] Fetched ${shopifyData.newArrivals.edges.length} new arrivals`);
 
+    const currencySymbols: Record<string, string> = {
+      'USD': '$',
+      'JPY': '¥',
+      'CNY': '¥',
+      'KRW': '₩',
+      'THB': '฿',
+      'TWD': 'NT$',
+      'EUR': '€',
+      'GBP': '£',
+      'CAD': 'CA$'
+    };
+
     const formatProduct = (node: any) => {
       const currencyCode = node.priceRange.minVariantPrice.currencyCode;
       const amount = parseFloat(node.priceRange.minVariantPrice.amount);
-
-      // Format price with currency symbol
-      const currencySymbols: Record<string, string> = {
-        'USD': '$',
-        'JPY': '¥',
-        'CNY': '¥',
-        'KRW': '₩',
-        'THB': '฿',
-        'TWD': 'NT$',
-        'EUR': '€',
-        'GBP': '£',
-        'CAD': 'CA$'
-      };
 
       const symbol = currencySymbols[currencyCode] || currencyCode;
 
@@ -254,7 +301,40 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
       };
     };
 
-    const collections = (shopifyData.collections?.edges || []).map((edge: any) => formatCollection(edge.node));
+    // Fetch sale collection products
+    let saleProducts: any[] = [];
+    try {
+      const saleData = await shopifyFetch({
+        query: SALE_QUERY,
+        context,
+        language: locale,
+        country: detectedCountry
+      });
+      if (saleData.collection?.products?.edges) {
+        saleProducts = saleData.collection.products.edges.map((edge: any) => {
+          const node = edge.node;
+          const formatted = formatProduct(node);
+          // Add compare-at price if available
+          const compareAmount = node.compareAtPriceRange?.minVariantPrice?.amount;
+          if (compareAmount && parseFloat(compareAmount) > 0) {
+            const compCurrency = node.compareAtPriceRange.minVariantPrice.currencyCode;
+            const compSymbol = currencySymbols[compCurrency] || compCurrency;
+            const compFormatted = ['JPY', 'KRW', 'TWD', 'THB', 'CNY'].includes(compCurrency)
+              ? parseFloat(compareAmount).toLocaleString('ja-JP', { maximumFractionDigits: 0 })
+              : parseFloat(compareAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            return { ...formatted, compareAtPrice: `${compSymbol}${compFormatted}` };
+          }
+          return { ...formatted, compareAtPrice: null };
+        });
+      }
+    } catch (e) {
+      console.error("Failed to fetch sale collection:", e);
+    }
+
+    // Filter out "Sale" collection from the collection slider
+    const collections = (shopifyData.collections?.edges || [])
+      .map((edge: any) => formatCollection(edge.node))
+      .filter((c: any) => c.handle !== 'sale');
     const featuredProducts = shopifyData.featured.edges.map((edge: any) => formatProduct(edge.node));
     const newArrivals = shopifyData.newArrivals.edges.map((edge: any) => formatProduct(edge.node));
 
@@ -262,6 +342,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
       collections,
       featuredProducts,
       newArrivals,
+      saleProducts,
       locale,
       detectedCountry,
       detectedCurrency
@@ -272,6 +353,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
       collections: [],
       featuredProducts: [],
       newArrivals: [],
+      saleProducts: [],
       locale,
       detectedCountry: "JP",
       detectedCurrency: "JPY"
@@ -283,10 +365,12 @@ import Header from "~/components/Header";
 import Footer from "~/components/Footer";
 import CollectionSlider from "~/components/CollectionSlider";
 import SaleCountdown from "~/components/SaleCountdown";
+import ProductCard from "~/components/ProductCard";
 
 export default function Index() {
-  const { collections, featuredProducts, newArrivals, detectedCurrency } = useLoaderData<typeof loader>();
-  const { t } = useTranslation();
+  const { collections, featuredProducts, newArrivals, saleProducts, detectedCurrency } = useLoaderData<typeof loader>();
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language || "en";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -301,6 +385,69 @@ export default function Index() {
         <Hero />
         <SaleCountdown />
         <CollectionSlider collections={collections} />
+
+        {/* Special Sale Section */}
+        {saleProducts && saleProducts.length > 0 && (
+          <section style={{
+            background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+            padding: "40px 0",
+            margin: "20px 0",
+          }}>
+            <div className="container">
+              <div style={{ textAlign: "center", marginBottom: "30px" }}>
+                <span style={{
+                  display: "inline-block",
+                  background: "linear-gradient(135deg, #e63946, #ff6b6b)",
+                  color: "white",
+                  padding: "4px 16px",
+                  borderRadius: "20px",
+                  fontSize: "0.75rem",
+                  fontWeight: "800",
+                  letterSpacing: "2px",
+                  textTransform: "uppercase",
+                  marginBottom: "8px",
+                }}>
+                  ✦ SPECIAL ✦
+                </span>
+                <h2 style={{ color: "#fff", fontSize: "1.8rem", fontWeight: "800", marginBottom: "8px" }}>
+                  {t("special_sale_title", { defaultValue: "Special Sale" })}
+                </h2>
+                <p style={{ color: "#aaa", fontSize: "0.9rem" }}>
+                  {t("special_sale_subtitle", { defaultValue: "Limited items at special prices" })}
+                </p>
+              </div>
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+                gap: "16px",
+              }}>
+                {(saleProducts as any[]).map((product: any, i: number) => (
+                  <ProductCard key={product.id} product={product} index={i} />
+                ))}
+              </div>
+              <div style={{ textAlign: "center", marginTop: "24px" }}>
+                <a
+                  href={`/${currentLang}/collections/sale`}
+                  style={{
+                    display: "inline-block",
+                    background: "linear-gradient(135deg, #e63946, #ff6b6b)",
+                    color: "white",
+                    padding: "12px 32px",
+                    borderRadius: "30px",
+                    fontWeight: "700",
+                    fontSize: "0.95rem",
+                    textDecoration: "none",
+                    transition: "transform 0.2s, box-shadow 0.2s",
+                    boxShadow: "0 4px 15px rgba(230,57,70,0.4)",
+                  }}
+                >
+                  {t("view_all_sale", { defaultValue: "View All Sale Items →" })}
+                </a>
+              </div>
+            </div>
+          </section>
+        )}
+
         <NewArrivals products={newArrivals} />
         <TrustBadges />
         <ProductGrid products={featuredProducts} />
