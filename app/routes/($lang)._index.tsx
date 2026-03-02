@@ -176,7 +176,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
         id
         title
         handle
-        products(first: 10, sortKey: CREATED_AT, reverse: true) {
+        products(first: 10, sortKey: CREATED, reverse: true) {
           edges {
             node {
               id
