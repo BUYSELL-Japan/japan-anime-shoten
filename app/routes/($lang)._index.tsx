@@ -172,13 +172,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
           }
         }
       }
-    }
-  `;
-
-  // Separate query for Sale collection
-  const SALE_QUERY = `
-    query SaleCollection {
-      collection(handle: "sale") {
+      saleCollection: collection(handle: "sale") {
         id
         title
         handle
@@ -301,34 +295,24 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
       };
     };
 
-    // Fetch sale collection products
+    // Get sale collection products from main query
     let saleProducts: any[] = [];
-    try {
-      const saleData = await shopifyFetch({
-        query: SALE_QUERY,
-        context,
-        language: locale,
-        country: detectedCountry
+    if (shopifyData.saleCollection?.products?.edges) {
+      saleProducts = shopifyData.saleCollection.products.edges.map((edge: any) => {
+        const node = edge.node;
+        const formatted = formatProduct(node);
+        // Add compare-at price if available
+        const compareAmount = node.compareAtPriceRange?.minVariantPrice?.amount;
+        if (compareAmount && parseFloat(compareAmount) > 0) {
+          const compCurrency = node.compareAtPriceRange.minVariantPrice.currencyCode;
+          const compSymbol = currencySymbols[compCurrency] || compCurrency;
+          const compFormatted = ['JPY', 'KRW', 'TWD', 'THB', 'CNY'].includes(compCurrency)
+            ? parseFloat(compareAmount).toLocaleString('ja-JP', { maximumFractionDigits: 0 })
+            : parseFloat(compareAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          return { ...formatted, compareAtPrice: `${compSymbol}${compFormatted}` };
+        }
+        return { ...formatted, compareAtPrice: null };
       });
-      if (saleData.collection?.products?.edges) {
-        saleProducts = saleData.collection.products.edges.map((edge: any) => {
-          const node = edge.node;
-          const formatted = formatProduct(node);
-          // Add compare-at price if available
-          const compareAmount = node.compareAtPriceRange?.minVariantPrice?.amount;
-          if (compareAmount && parseFloat(compareAmount) > 0) {
-            const compCurrency = node.compareAtPriceRange.minVariantPrice.currencyCode;
-            const compSymbol = currencySymbols[compCurrency] || compCurrency;
-            const compFormatted = ['JPY', 'KRW', 'TWD', 'THB', 'CNY'].includes(compCurrency)
-              ? parseFloat(compareAmount).toLocaleString('ja-JP', { maximumFractionDigits: 0 })
-              : parseFloat(compareAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            return { ...formatted, compareAtPrice: `${compSymbol}${compFormatted}` };
-          }
-          return { ...formatted, compareAtPrice: null };
-        });
-      }
-    } catch (e) {
-      console.error("Failed to fetch sale collection:", e);
     }
 
     // Filter out "Sale" collection from the collection slider
