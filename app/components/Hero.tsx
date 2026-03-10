@@ -72,9 +72,10 @@ export default function Hero() {
                                 opacity: index === current ? 1 : 0,
                                 transform: index === current ? "translateY(0)" : "translateY(30px)",
                                 transition: "opacity 0.8s ease, transform 0.8s ease",
-                                fontSize: "3rem",
+                                fontSize: "clamp(1.8rem, 6vw, 3rem)",
                                 fontWeight: "800",
-                                marginBottom: "1rem"
+                                marginBottom: "1rem",
+                                wordBreak: "break-word"
                             }}
                         >
                             {t(slide.titleKey)}

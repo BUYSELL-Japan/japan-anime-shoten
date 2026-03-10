@@ -150,7 +150,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                     )}
                 </div>
                 <div style={{ padding: "15px" }}>
-                    <h3 style={{ fontSize: "1rem", fontWeight: "600", marginBottom: "8px", height: "40px", overflow: "hidden", lineHeight: "1.4" }}>{product.title}</h3>
+                    <h3 style={{ fontSize: "1rem", fontWeight: "600", marginBottom: "8px", height: "40px", overflow: "hidden", lineHeight: "1.4", wordBreak: "break-word", overflowWrap: "anywhere" }}>{product.title}</h3>
                     {isOnlyOneLeft && isAvailable && (
                         <div style={{ color: "red", fontSize: "0.85rem", fontWeight: "bold", marginBottom: "8px", display: "flex", alignItems: "center", gap: "4px" }}>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

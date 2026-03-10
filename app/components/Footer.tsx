@@ -1,9 +1,11 @@
-import { Link } from "@remix-run/react";
+import { Link, useParams } from "@remix-run/react";
 
 import { useTranslation } from "react-i18next";
 
 export default function Footer() {
     const { t } = useTranslation();
+    const { lang } = useParams();
+    const currentLang = lang || "en";
 
     return (
         <footer style={{ background: "#111", color: "#888", padding: "60px 0 20px" }}>
@@ -12,20 +14,19 @@ export default function Footer() {
                     <div>
                         <h3 style={{ color: "white", marginBottom: "20px", fontWeight: "700" }}>{t('footer_about_us')}</h3>
                         <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px", padding: 0 }}>
-                            <li><Link to="/about" style={{ color: "#888" }}>{t('footer_our_story')}</Link></li>
-                            <li><Link to="/authenticity" style={{ color: "#888" }}>{t('footer_authenticity')}</Link></li>
-                            <li><Link to="/wholesale" style={{ color: "#888" }}>{t('footer_wholesale')}</Link></li>
+                            <li><Link to={`/${currentLang}/about`} style={{ color: "#888" }}>{t('footer_our_story')}</Link></li>
+                            <li><Link to={`/${currentLang}/authenticity`} style={{ color: "#888" }}>{t('footer_authenticity')}</Link></li>
+                            <li><Link to={`/${currentLang}/wholesale`} style={{ color: "#888" }}>{t('footer_wholesale')}</Link></li>
                         </ul>
                     </div>
                     <div>
                         <h3 style={{ color: "white", marginBottom: "20px", fontWeight: "700" }}>{t('footer_customer_care')}</h3>
                         <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px", padding: 0 }}>
-                            <li><Link to="/policies/shipping-policy" style={{ color: "#888" }}>{t('footer_shipping_policy')}</Link></li>
-                            <li><Link to="/policies/refund-policy" style={{ color: "#888" }}>{t('footer_return_policy')}</Link></li>
-                            <li><Link to="/policies/privacy-policy" style={{ color: "#888" }}>{t('policies.privacy.title')}</Link></li>
-                            <li><Link to="/policies/terms-of-service" style={{ color: "#888" }}>{t('policies.terms.title')}</Link></li>
-                            <li><Link to="/policies/legal-notice" style={{ color: "#888" }}>{t('policies.legal.title')}</Link></li>
-                            {/* <li><Link to="/contact" style={{ color: "#888" }}>{t('footer_contact_us')}</Link></li> */}
+                            <li><Link to={`/${currentLang}/policies/shipping-policy`} style={{ color: "#888" }}>{t('footer_shipping_policy')}</Link></li>
+                            <li><Link to={`/${currentLang}/policies/refund-policy`} style={{ color: "#888" }}>{t('footer_return_policy')}</Link></li>
+                            <li><Link to={`/${currentLang}/policies/privacy-policy`} style={{ color: "#888" }}>{t('policies.privacy.title')}</Link></li>
+                            <li><Link to={`/${currentLang}/policies/terms-of-service`} style={{ color: "#888" }}>{t('policies.terms.title')}</Link></li>
+                            <li><Link to={`/${currentLang}/policies/legal-notice`} style={{ color: "#888" }}>{t('policies.legal.title')}</Link></li>
                         </ul>
                     </div>
                     <div>
@@ -44,3 +45,4 @@ export default function Footer() {
         </footer>
     );
 }
+

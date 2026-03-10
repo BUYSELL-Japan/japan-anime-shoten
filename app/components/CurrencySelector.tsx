@@ -45,6 +45,7 @@ export default function CurrencySelector({ currentCurrency }: { currentCurrency:
     return (
         <div className="currency-selector" style={{ position: 'relative' }}>
             <button
+                className="currency-btn"
                 onClick={() => setIsOpen(!isOpen)}
                 style={{
                     display: 'flex',
@@ -70,7 +71,7 @@ export default function CurrencySelector({ currentCurrency }: { currentCurrency:
                 }}
             >
                 <span>{currentCurrencyObj.symbol}</span>
-                <span>{currentCurrencyObj.code}</span>
+                <span className="mobile-hide-text">{currentCurrencyObj.code}</span>
                 <span style={{ fontSize: '10px' }}>▼</span>
             </button>
 

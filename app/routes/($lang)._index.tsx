@@ -374,55 +374,103 @@ export default function Index() {
         {saleProducts && saleProducts.length > 0 && (
           <section style={{
             background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
-            padding: "40px 0",
-            margin: "20px 0",
+            padding: "16px 0",
+            margin: "0",
           }}>
             <div className="container">
-              <div style={{ textAlign: "center", marginBottom: "30px" }}>
+              <div style={{ textAlign: "center", marginBottom: "12px" }}>
                 <span style={{
                   display: "inline-block",
                   background: "linear-gradient(135deg, #e63946, #ff6b6b)",
                   color: "white",
-                  padding: "4px 16px",
-                  borderRadius: "20px",
-                  fontSize: "0.75rem",
+                  padding: "2px 10px",
+                  borderRadius: "12px",
+                  fontSize: "0.65rem",
                   fontWeight: "800",
-                  letterSpacing: "2px",
+                  letterSpacing: "1px",
                   textTransform: "uppercase",
-                  marginBottom: "8px",
+                  marginBottom: "4px",
                 }}>
                   ✦ SPECIAL ✦
                 </span>
-                <h2 style={{ color: "#fff", fontSize: "1.8rem", fontWeight: "800", marginBottom: "8px" }}>
+                <h2 style={{ color: "#fff", fontSize: "1.3rem", fontWeight: "800", marginBottom: "4px" }}>
                   {t("special_sale_title", { defaultValue: "Special Sale" })}
                 </h2>
-                <p style={{ color: "#aaa", fontSize: "0.9rem" }}>
+                <p style={{ color: "#aaa", fontSize: "0.8rem", margin: 0 }}>
                   {t("special_sale_subtitle", { defaultValue: "Limited items at special prices" })}
                 </p>
               </div>
-              <div style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-                gap: "16px",
-              }}>
-                {(saleProducts as any[]).map((product: any, i: number) => (
-                  <ProductCard key={product.id} product={product} index={i} />
-                ))}
+              <div className="sale-products-wrapper" style={{ position: "relative" }}>
+                <style dangerouslySetInnerHTML={{
+                  __html: `
+                  .sale-products-container {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                    gap: 12px;
+                  }
+                  .scroll-indicator {
+                    display: none;
+                  }
+                  @media (max-width: 768px) {
+                    .sale-products-container {
+                      display: flex;
+                      overflow-x: auto;
+                      scroll-snap-type: x mandatory;
+                      scrollbar-width: none; /* Firefox */
+                      -ms-overflow-style: none; /* IE/Edge */
+                      padding-bottom: 12px;
+                    }
+                    .sale-products-container::-webkit-scrollbar {
+                      display: none;
+                    }
+                    .sale-product-item {
+                      flex: 0 0 160px; /* Fixed width on mobile so next item peeks */
+                      scroll-snap-align: start;
+                    }
+                    .scroll-indicator {
+                      display: flex;
+                      align-items: center;
+                      justify-content: flex-end;
+                      font-size: 0.75rem;
+                      color: #aaa;
+                      margin-bottom: 8px;
+                      padding-right: 4px;
+                      animation: pulseScroll 2s infinite;
+                    }
+                    @keyframes pulseScroll {
+                      0%, 100% { transform: translateX(0); opacity: 0.7; }
+                      50% { transform: translateX(5px); opacity: 1; }
+                    }
+                  }
+                `}} />
+
+                <div className="scroll-indicator">
+                  <span>Swipe to see more &rarr;</span>
+                </div>
+
+                <div className="sale-products-container">
+                  {(saleProducts as any[]).map((product: any, i: number) => (
+                    <div key={product.id} className="sale-product-item" style={{ transform: "scale(0.9)", transformOrigin: "top left" }}>
+                      <ProductCard product={product} index={i} />
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div style={{ textAlign: "center", marginTop: "24px" }}>
+
+              <div style={{ textAlign: "center", marginTop: "16px" }}>
                 <a
                   href={`/${currentLang}/collections/sale`}
                   style={{
                     display: "inline-block",
                     background: "linear-gradient(135deg, #e63946, #ff6b6b)",
                     color: "white",
-                    padding: "12px 32px",
-                    borderRadius: "30px",
-                    fontWeight: "700",
-                    fontSize: "0.95rem",
+                    padding: "8px 20px",
+                    borderRadius: "20px",
+                    fontWeight: "600",
+                    fontSize: "0.85rem",
                     textDecoration: "none",
                     transition: "transform 0.2s, box-shadow 0.2s",
-                    boxShadow: "0 4px 15px rgba(230,57,70,0.4)",
+                    boxShadow: "0 2px 10px rgba(230,57,70,0.3)",
                   }}
                 >
                   {t("view_all_sale", { defaultValue: "View All Sale Items →" })}

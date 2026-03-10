@@ -126,7 +126,7 @@ export default function SearchBar() {
                         <circle cx="11" cy="11" r="8" />
                         <line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
-                    {t("search", { defaultValue: "Search" })}
+                    <span className="mobile-hide-text">{t("search", { defaultValue: "Search" })}</span>
                 </button>
             )}
 

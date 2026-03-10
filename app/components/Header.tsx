@@ -78,18 +78,20 @@ export default function Header({ currentCurrency }: { currentCurrency?: string }
                         letterSpacing: "1px",
                     }}
                 >
-                    <div className="sale-banner-scroll">
-                        <span style={{ padding: "0 40px" }}>
-                            ✦ {bannerText} ✦ {bannerSub} ✦ ~3/15 ✦ {bannerText} ✦ {bannerSub} ✦ ~3/15 ✦
-                        </span>
+                    <div className="sale-banner-container">
+                        <div className="sale-banner-scroll">
+                            <span style={{ padding: "0 40px" }}>
+                                ✦ {bannerText} ✦ {bannerSub} ✦ ~3/15 ✦ {bannerText} ✦ {bannerSub} ✦ ~3/15 ✦
+                            </span>
+                        </div>
                     </div>
                 </div>
             )}
-            <header style={{ borderBottom: "1px solid var(--color-border)", padding: "20px 0", position: "sticky", top: 0, background: "rgba(255,255,255,0.95)", backdropFilter: "blur(5px)", zIndex: 100 }}>
+            <header className="header-wrapper">
                 <div className="container" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     {/* Logo */}
                     <Link to={`/${currentLang}`} style={{ textDecoration: "none", color: "inherit" }}>
-                        <h1 style={{ fontSize: "1.5rem", fontWeight: "800", letterSpacing: "-0.5px", margin: 0 }}>
+                        <h1 className="header-logo">
                             JAPAN ANIME <span className="text-red">SHOTEN</span>
                         </h1>
                     </Link>
@@ -104,13 +106,102 @@ export default function Header({ currentCurrency }: { currentCurrency?: string }
                     </nav>
 
                     {/* Actions */}
-                    <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+                    <style dangerouslySetInnerHTML={{
+                        __html: `
+                        .header-wrapper {
+                            padding: 20px 0;
+                            border-bottom: 1px solid var(--color-border);
+                            position: sticky;
+                            top: 0;
+                            background: rgba(255,255,255,0.95);
+                            backdrop-filter: blur(5px);
+                            z-index: 100;
+                        }
+                        .header-logo {
+                            font-size: 1.5rem;
+                            font-weight: 800;
+                            letter-spacing: -0.5px;
+                            margin: 0;
+                            white-space: nowrap;
+                        }
+                        .header-actions {
+                            display: flex;
+                            gap: 16px;
+                            align-items: center;
+                        }
+                        .header-select {
+                            padding: 4px;
+                            border-radius: 4px;
+                            border: 1px solid #ddd;
+                        }
+                        .header-cart-btn {
+                            padding: 8px 16px;
+                            font-size: 0.9rem;
+                            white-space: nowrap;
+                        }
+                        @media (max-width: 768px) {
+                            .header-wrapper {
+                                padding: 10px 0;
+                            }
+                            .header-logo {
+                                font-size: 1.2rem;
+                            }
+                            .header-actions {
+                                gap: 8px;
+                            }
+                            .header-select {
+                                padding: 2px;
+                                font-size: 0.8rem;
+                            }
+                            .header-cart-btn {
+                                padding: 6px 10px;
+                                font-size: 0.8rem;
+                            }
+                            .mobile-hide-text {
+                                display: none !important;
+                            }
+                            .currency-btn {
+                                padding: 4px 6px !important;
+                                gap: 2px !important;
+                                font-size: 0.8rem !important;
+                            }
+                        }
+                        @media (max-width: 480px) {
+                            .header-wrapper {
+                                padding: 6px 0;
+                            }
+                            /* Override global .container padding for extremely narrow screens */
+                            .header-wrapper .container {
+                                padding-left: 8px;
+                                padding-right: 8px;
+                            }
+                            .header-logo {
+                                font-size: 0.85rem; /* Even smaller on tiny screens */
+                                letter-spacing: -1px;
+                            }
+                            .header-actions {
+                                gap: 2px;
+                            }
+                            .header-select {
+                                width: 40px; /* Compress selectors on very small screens */
+                                text-overflow: ellipsis;
+                                font-size: 0.7rem;
+                                padding: 2px 0px;
+                            }
+                            .header-cart-btn {
+                                padding: 4px 6px;
+                                font-size: 0.7rem;
+                            }
+                        }
+                        `
+                    }} />
+                    <div className="header-actions">
                         {/* Language Selector */}
                         <select
                             name="lng"
                             value={currentLang}
                             onChange={(e) => changeLanguage(e.target.value)}
-                            style={{ padding: "4px", borderRadius: "4px", border: "1px solid #ddd" }}
+                            className="header-select"
                         >
                             <option value="en">English</option>
                             <option value="zh-TW">繁體中文</option>
@@ -120,15 +211,23 @@ export default function Header({ currentCurrency }: { currentCurrency?: string }
                         </select>
 
                         {/* Currency Selector */}
-                        <CurrencySelector currentCurrency={currentCurrency || 'JPY'} />
+                        <div className="header-select-wrapper">
+                            <CurrencySelector currentCurrency={currentCurrency || 'JPY'} />
+                        </div>
 
                         <SearchBar />
                         <button
-                            className={`btn-primary ${isAnimating ? "cart-added-animation" : ""}`}
-                            style={{ padding: "8px 16px", fontSize: "0.9rem" }}
+                            className={`btn-primary header-cart-btn ${isAnimating ? "cart-added-animation" : ""}`}
                             onClick={openCart}
+                            style={{ display: "flex", alignItems: "center", gap: "4px" }}
                         >
-                            Cart ({cart?.totalQuantity || 0})
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
+                            <span className="mobile-hide-text">{t("cart_button", { defaultValue: "Cart" })}</span>
+                            <span style={{ fontWeight: "bold" }}>({cart?.totalQuantity || 0})</span>
                         </button>
                     </div>
                 </div>

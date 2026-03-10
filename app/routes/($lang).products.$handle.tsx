@@ -8,10 +8,32 @@ import Footer from "~/components/Footer";
 import { useTranslation } from "react-i18next";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
-  return [
-    { title: data?.product?.title ? `${data.product.title} | Japan Anime Shoten` : "Product Details" },
-    { name: "description", content: data?.product?.description?.substring(0, 160) || "Product Details" },
+  const title = data?.product?.title ? `${data.product.title} | Japan Anime Shoten` : "Product Details";
+  // The product description from Shopify can contain HTML tags if descriptionHtml is used, but we use description.
+  // Shopify's description might be long.
+  const description = data?.product?.description?.substring(0, 160) || "Product Details";
+  // Assuming data.product.images.edges[0].node.url
+  const edge = data?.product?.images?.edges?.[0];
+  const imageUrl = edge ? edge.node.url : undefined;
+
+  const defaultMeta = [
+    { title },
+    { name: "description", content: description },
+    { property: "og:type", content: "product" },
+    { property: "og:title", content: title },
+    { property: "og:description", content: description },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: title },
+    { name: "twitter:description", content: description },
   ];
+
+  if (imageUrl) {
+    defaultMeta.push({ property: "og:image", content: imageUrl });
+    defaultMeta.push({ property: "og:image:secure_url", content: imageUrl });
+    defaultMeta.push({ name: "twitter:image", content: imageUrl });
+  }
+
+  return defaultMeta;
 };
 
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -122,6 +144,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
       product(handle: $handle) {
         id
         title
+        description(truncateAt: 160)
         descriptionHtml
         availableForSale
         priceRange {
@@ -327,24 +350,70 @@ export default function ProductDetail() {
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header currentCurrency={detectedCurrency} />
 
-      <main className="container" style={{ padding: "40px 20px", flex: 1 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "40px" }}>
+      <main className="container" style={{ padding: "40px 20px", flex: 1, maxWidth: "100vw", overflowX: "hidden", boxSizing: "border-box" }}>
+        <style dangerouslySetInnerHTML={{
+          __html: `
+          .product-detail-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            width: 100%;
+            max-width: 100%;
+          }
+          .product-main-image {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #eee;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            max-width: 100%;
+            cursor: zoom-in;
+            position: relative;
+          }
+          @media (max-width: 768px) {
+            .product-detail-layout {
+              grid-template-columns: 1fr;
+              gap: 24px;
+            }
+          }
+          
+          /* Force contents of Shopify's descriptionHtml to not break layout */
+          .product-description {
+            max-width: 100%;
+            overflow-x: hidden;
+          }
+          .product-description img, 
+          .product-description iframe, 
+          .product-description video {
+            max-width: 100% !important;
+            height: auto !important;
+          }
+          .product-description table {
+            width: 100% !important;
+            max-width: 100% !important;
+            display: block;
+            overflow-x: auto;
+          }
+          .product-description p, 
+          .product-description span, 
+          .product-description div,
+          .product-description a {
+            max-width: 100% !important;
+            word-break: break-word !important;
+            overflow-wrap: anywhere !important;
+            white-space: normal !important;
+          }
+          `
+        }} />
+        <div className="product-detail-layout">
           {/* Images */}
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <div
-              style={{
-                borderRadius: "8px",
-                overflow: "hidden",
-                border: "1px solid #eee",
-                background: "#fff",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "600px",
-                width: "100%",
-                cursor: "zoom-in",
-                position: "relative"
-              }}
+              className="product-main-image"
               onClick={() => {
                 const currentIndex = images.findIndex((edge: any) => edge.node.url === mainImage);
                 openLightbox(currentIndex >= 0 ? currentIndex : 0);
@@ -436,15 +505,15 @@ export default function ProductDetail() {
           </div>
 
           {/* Details */}
-          <div>
-            <h1 style={{ fontSize: "2rem", fontWeight: "700", marginBottom: "10px" }}>{product.title}</h1>
+          <div style={{ minWidth: 0 }}>
+            <h1 style={{ fontSize: "2rem", fontWeight: "700", marginBottom: "10px", wordBreak: "break-word", overflowWrap: "anywhere" }}>{product.title}</h1>
             <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "20px", flexWrap: "wrap" }}>
               {saleActive && isAvailable ? (
                 <>
-                  <div style={{ fontSize: "1.1rem", color: "#999", textDecoration: "line-through" }}>
+                  <div style={{ fontSize: "1.1rem", color: "#999", textDecoration: "line-through", wordBreak: "break-word" }}>
                     {price}
                   </div>
-                  <div style={{ fontSize: "1.5rem", fontWeight: "700", color: "#e63946" }}>
+                  <div style={{ fontSize: "1.5rem", fontWeight: "700", color: "#e63946", wordBreak: "break-word" }}>
                     {product.currencySymbol}{getSalePrice(product.rawPrice).toLocaleString()}
                   </div>
                   <span style={{
@@ -460,7 +529,7 @@ export default function ProductDetail() {
                   </span>
                 </>
               ) : (
-                <div style={{ fontSize: "1.5rem", fontWeight: "600", color: isAvailable ? "var(--color-primary)" : "#999" }}>
+                <div style={{ fontSize: "1.5rem", fontWeight: "600", color: isAvailable ? "var(--color-primary)" : "#999", wordBreak: "break-word" }}>
                   {price}
                 </div>
               )}
@@ -502,10 +571,23 @@ export default function ProductDetail() {
               </div>
             )}
 
-            <div style={{ marginBottom: "30px", lineHeight: "1.6", color: "#444" }} dangerouslySetInnerHTML={{ __html: product.descriptionHtml }} />
+            <div
+              className="product-description"
+              style={{
+                marginBottom: "30px",
+                lineHeight: "1.6",
+                color: "#444",
+                wordBreak: "break-word",
+                overflowWrap: "anywhere",
+                width: "100%",
+                maxWidth: "100%",
+                overflowX: "hidden"
+              }}
+              dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
+            />
 
             {/* Actions */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "15px", maxWidth: "400px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "15px", width: "100%" }}>
               <button
                 className={isAvailable ? "btn-primary" : ""}
                 disabled={isSubmitting || isLoading || !isAvailable}
@@ -530,7 +612,16 @@ export default function ProductDetail() {
 
             {/* Make an Offer */}
             {isAvailable && (
-              <div style={{ marginTop: "15px", maxWidth: "400px" }}>
+              <div style={{ marginTop: "15px", width: "100%" }}>
+                <p style={{
+                  fontSize: "0.85rem",
+                  color: "#666",
+                  marginBottom: "8px",
+                  lineHeight: "1.4",
+                  textAlign: "left"
+                }}>
+                  {t("offer_hint", { defaultValue: "Found a lower price elsewhere? Feel free to offer your price! Reasonable negotiations are welcome." })}
+                </p>
                 <button
                   onClick={() => setIsOfferModalOpen(true)}
                   style={{
@@ -598,8 +689,9 @@ export default function ProductDetail() {
                   key={rec.id}
                   href={`/${locale}/products/${rec.handle}`}
                   style={{
-                    flexShrink: 0,
-                    width: "160px",
+                    flex: "0 0 auto",
+                    width: "45%", // Takes up about half the screen on mobile, but grows on larger screens
+                    maxWidth: "160px",
                     textDecoration: "none",
                     color: "inherit",
                     scrollSnapAlign: "start",
@@ -608,8 +700,8 @@ export default function ProductDetail() {
                 >
                   <div
                     style={{
-                      width: "160px",
-                      height: "160px",
+                      width: "100%",
+                      aspectRatio: "1/1",
                       borderRadius: "8px",
                       overflow: "hidden",
                       backgroundColor: "#f5f5f5",

@@ -12,6 +12,7 @@
     "search_view_all": "View all results",
     "search_try_different": "Try different keywords or check the spelling.",
     "make_offer": "Make an Offer",
+    "offer_hint": "Found a lower price elsewhere? Feel free to offer your price! Reasonable negotiations are welcome.",
     "current_price": "Current Price",
     "offer_your_price": "Your Offer Price",
     "offer_email": "Email Address",
@@ -128,7 +129,7 @@
                     ]
                 },
                 {
-                    "title": "Defective or Damaged Items \uD83D\uDEE1\uFE0F",
+                    "title": "Defective or Damaged Items 🛡️",
                     "content": [
                         "We take full responsibility for defective or damaged items.",
                         "Contact us within 14 days of delivery.",
@@ -149,7 +150,7 @@
                     ]
                 },
                 {
-                    "title": "Incorrect Items \uD83D\uDCE6",
+                    "title": "Incorrect Items 📦",
                     "content": [
                         "If we sent you the wrong item:",
                         "Contact us within 14 days of delivery.",
@@ -177,7 +178,7 @@
                     ]
                 },
                 {
-                    "title": "Lost or Damaged in Transit \uD83D\uDCEC",
+                    "title": "Lost or Damaged in Transit 📬",
                     "content": [
                         "If your package is lost: Contact us if tracking shows no movement for 30 days. We will investigate with the shipping carrier. Full refund or replacement provided after investigation.",
                         "If your package is damaged in transit: Contact us within 14 days with photos of damaged packaging. We will file a claim with the carrier. Full refund or replacement provided.",
@@ -185,7 +186,7 @@
                     ]
                 },
                 {
-                    "title": "Customs-Related Returns \u26A0\uFE0F",
+                    "title": "Customs-Related Returns ⚠️",
                     "content": [
                         "If you refuse customs fees: Item will be returned to us. Refund minus all shipping costs (original + return). Restocking fee may apply.",
                         "If package is seized by customs: We are not responsible for customs seizures. No refunds for items seized due to local regulations. Please check your country's import restrictions before ordering."
@@ -208,7 +209,7 @@
                     ]
                 },
                 {
-                    "title": "Our Commitment \uD83D\uDC99",
+                    "title": "Our Commitment 💙",
                     "content": [
                         "Customer satisfaction is our priority.",
                         "We handle all return requests fairly and quickly.",
@@ -616,6 +617,55 @@
                 }
             ]
         }
+    },
+    "about": {
+        "title": "Our Story",
+        "tagline": "From Osaka, bringing Japan's treasures to your collection",
+        "paragraphs": [
+            "We want to deliver Japanese anime culture to fans around the world with uncompromising quality — Japan Anime Shoten was born from this passion.",
+            "Based in Osaka, one of the world's greatest pop culture hubs, we operate at the heart of Japan's anime scene. From the vast domestic distribution market, our expert curators carefully select rare figures, trading cards, and limited-edition goods.",
+            "We are not just a retailer — as fellow fans who share your passion, we take pride in being the bridge that connects authentic Japanese goods to doorsteps around the world."
+        ]
+    },
+    "authenticity": {
+        "title": "Authenticity Guarantee",
+        "tagline": "Zero counterfeits. 100% peace of mind.",
+        "intro": "At Japan Anime Shoten, we strictly eliminate all counterfeit and bootleg products. Every item we carry is exclusively selected from domestically distributed genuine products within Japan.",
+        "features": [
+            {
+                "title": "🔍 Expert Procurement",
+                "desc": "Our specialized staff personally verifies each item — checking license seals, paint precision, and packaging specifications before purchase."
+            },
+            {
+                "title": "✅ Dual Inspection System",
+                "desc": "We conduct rigorous condition checks twice — once at procurement and again before shipping — for a total of two thorough inspections."
+            },
+            {
+                "title": "💰 Full Refund Guarantee",
+                "desc": "In the unlikely event that a delivered product is proven to be non-genuine, we will immediately issue a full refund including shipping costs."
+            }
+        ],
+        "closing": "We will never betray the trust of customers who believe in the quality of Japan's collector market."
+    },
+    "wholesale": {
+        "title": "Wholesale",
+        "tagline": "Your business partner for sourcing Japanese exclusives",
+        "intro": "We offer wholesale services for shops, online stores, and event vendors around the world.",
+        "features": [
+            {
+                "title": "📦 Bulk Discounts",
+                "desc": "Flexible pricing based on order quantity. The more you order, the better the deal."
+            },
+            {
+                "title": "🎯 Request & Sourcing",
+                "desc": "We also offer a procurement agent service to track down specific limited-edition items and rare goods from the Japanese market."
+            },
+            {
+                "title": "🌍 Safe International Shipping",
+                "desc": "With tracked and insured shipping, you can receive even large bulk orders with complete peace of mind."
+            }
+        ],
+        "closing": "Leveraging our Osaka-based network, we are here to powerfully support your business."
     },
     "footer_copyright": "© 2026 Japan Anime Shoten. All rights reserved."
 }

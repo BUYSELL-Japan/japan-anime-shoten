@@ -1,7 +1,10 @@
 import { useTranslation } from "react-i18next";
+import { Link, useParams } from "@remix-run/react";
 
 export default function ShopIntro() {
     const { t } = useTranslation();
+    const { lang } = useParams();
+    const currentLang = lang || "en";
 
     return (
         <section className="container" style={{ padding: "var(--spacing-2xl) 0", textAlign: "center" }}>
@@ -17,10 +20,11 @@ export default function ShopIntro() {
                     {t("shop_intro_text")}
                 </p>
                 <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
-                    <button className="btn-primary">{t("btn_view_new_arrivals")}</button>
-                    <button className="btn-secondary">{t("btn_about_us")}</button>
+                    <Link to={`/${currentLang}/collections/all`} className="btn-primary">{t("btn_view_new_arrivals")}</Link>
+                    <Link to={`/${currentLang}/about`} className="btn-secondary">{t("btn_about_us")}</Link>
                 </div>
             </div>
         </section>
     );
 }
+

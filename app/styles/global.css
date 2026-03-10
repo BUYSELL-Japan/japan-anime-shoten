@@ -40,6 +40,7 @@ body {
   color: var(--color-text);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 a {
@@ -205,10 +206,19 @@ button {
   }
 }
 
+.sale-banner-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+}
+
 .sale-banner-scroll {
   display: inline-block;
   white-space: nowrap;
   animation: saleBannerScroll 20s linear infinite;
+  padding-left: 100%;
+  /* Start scrolling from outside the right edge */
 }
 
 @keyframes salePulse {
