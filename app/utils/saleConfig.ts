@@ -2,10 +2,10 @@
 // To start a new sale: set isActive to true and update endDate
 // To end a sale: set isActive to false
 
-export const SALE_CONFIG = {
+export let SALE_CONFIG = {
     isActive: true,
     discountPercent: 10,
-    endDate: "2026-03-15T06:54:00+09:00", // JST
+    endDate: "2026-03-22T23:59:59+09:00", // JST
     title: {
         en: "🔥 SPRING SALE 🔥",
         ja: "🔥 スプリングセール 🔥",
@@ -23,6 +23,25 @@ export const SALE_CONFIG = {
         "zh-TW": "全場9折!",
     } as Record<string, string>,
 };
+
+let isInitialized = false;
+
+/**
+ * Dynamically update the sale configuration (e.g., from Shopify metafields)
+ */
+export function setDynamicSaleConfig(config: any) {
+    if (!config || isInitialized) return;
+
+    SALE_CONFIG = {
+        ...SALE_CONFIG,
+        ...config,
+        // Ensure nested objects are merged correctly if they exist in the config
+        title: { ...SALE_CONFIG.title, ...(config.title || {}) },
+        subtitle: { ...SALE_CONFIG.subtitle, ...(config.subtitle || {}) },
+    };
+    isInitialized = true;
+    console.log("[SaleConfig] Dynamic config applied:", SALE_CONFIG.endDate);
+}
 
 export function isSaleActive(): boolean {
     if (!SALE_CONFIG.isActive) return false;

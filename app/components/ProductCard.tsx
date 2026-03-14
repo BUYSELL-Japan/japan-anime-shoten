@@ -149,8 +149,63 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                         </div>
                     )}
                 </div>
-                <div style={{ padding: "15px" }}>
-                    <h3 style={{ fontSize: "1rem", fontWeight: "600", marginBottom: "8px", height: "40px", overflow: "hidden", lineHeight: "1.4", wordBreak: "break-word", overflowWrap: "anywhere" }}>{product.title}</h3>
+                <div style={{ padding: "15px", position: "relative" }}>
+                    <style dangerouslySetInnerHTML={{
+                        __html: `
+                        .product-card-title {
+                            font-size: 1rem;
+                            font-weight: 600;
+                            margin-bottom: 8px;
+                            line-height: 1.4;
+                            word-break: break-word;
+                            overflow-wrap: anywhere;
+                            /* Desktop default: 2 lines */
+                            display: -webkit-box;
+                            -webkit-line-clamp: 2;
+                            -webkit-box-orient: vertical;
+                            overflow: hidden;
+                            height: 2.8em; /* 1.4 * 2 lines */
+                            transition: all 0.2s ease;
+                            position: relative;
+                            z-index: 10;
+                            background: #fff;
+                        }
+                        
+                        /* Desktop Hover Expansion */
+                        @media (min-width: 769px) {
+                            .product-card:hover .product-card-title {
+                                -webkit-line-clamp: unset;
+                                height: auto;
+                                position: absolute;
+                                top: 15px; /* Match the padding top */
+                                left: 15px;
+                                right: 15px;
+                                padding-bottom: 8px;
+                                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                                z-index: 20;
+                            }
+                            /* Add a placeholder element to keep layout from jumping when position becomes absolute */
+                            .product-card-title-placeholder {
+                                height: 2.8em;
+                                margin-bottom: 8px;
+                                display: none;
+                            }
+                            .product-card:hover .product-card-title-placeholder {
+                                display: block;
+                            }
+                        }
+
+                        /* Mobile override: 3 lines */
+                        @media (max-width: 768px) {
+                            .product-card-title {
+                                -webkit-line-clamp: 3;
+                                height: 4.2em; /* 1.4 * 3 lines */
+                            }
+                        }
+                        `
+                    }} />
+                    <div className="product-card-title-placeholder"></div>
+                    <h3 className="product-card-title" title={product.title}>{product.title}</h3>
                     {isOnlyOneLeft && isAvailable && (
                         <div style={{ color: "red", fontSize: "0.85rem", fontWeight: "bold", marginBottom: "8px", display: "flex", alignItems: "center", gap: "4px" }}>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

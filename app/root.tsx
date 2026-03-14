@@ -15,6 +15,7 @@ import { useChangeLanguage } from "remix-i18next/react";
 import { useTranslation } from "react-i18next";
 import i18next from "./i18n.server";
 import i18n from "./i18n"; // Add this import for supportedLngs
+import { getSaleConfigFromShopify } from "./utils/shopify.server";
 
 import styles from "./styles/global.css?url";
 
@@ -32,7 +33,7 @@ export const links: LinksFunction = () => [
     },
 ];
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params, context }: LoaderFunctionArgs) {
     // Attempt to get locale from params (if available) or URL path
     let locale = params.lang;
 
@@ -48,7 +49,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
         locale = await i18next.getLocale(request);
     }
 
-    return json({ locale });
+    const saleConfig = await getSaleConfigFromShopify(context);
+
+    return json({ locale, saleConfig });
 }
 
 export let handle = {
@@ -63,10 +66,16 @@ import { CartProvider } from "./context/CartContext";
 import CartDrawer from "./components/CartDrawer";
 import SalePopup from "./components/SalePopup";
 import { useEffect } from "react";
+import { setDynamicSaleConfig } from "./utils/saleConfig";
 
 export default function App() {
-    let { locale } = useLoaderData<typeof loader>();
+    let { locale, saleConfig } = useLoaderData<typeof loader>();
     let { i18n } = useTranslation();
+
+    // Initialize dynamic sale config
+    if (saleConfig) {
+        setDynamicSaleConfig(saleConfig);
+    }
 
     // This hook will change the i18n instance language to the current locale
     // detected by the loader, this way, when we do some client-side

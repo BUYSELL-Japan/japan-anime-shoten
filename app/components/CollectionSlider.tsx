@@ -78,15 +78,39 @@ export default function CollectionSlider({ collections }: CollectionSliderProps)
                 }
                 
                 /* Specific enlargements for logos with lots of whitespace */
+                /* Bleach and Haikyuu need more enlargement because their source images are smaller */
                 .anime-logo-card[data-handle="bleach"] img,
                 .anime-logo-card[data-handle="haikyuu"] img {
                     max-width: 100%;
                     max-height: 100px;
-                    transform: scale(1.25);
+                    transform: scale(1.30);
                 }
                 .anime-logo-card[data-handle="bleach"]:hover img,
                 .anime-logo-card[data-handle="haikyuu"]:hover img {
-                    transform: scale(1.35);
+                    transform: scale(1.40);
+                    filter: grayscale(0%);
+                }
+
+                /* General enlargement for wide logos */
+                .anime-logo-card[data-handle="pokemon"] img,
+                .anime-logo-card[data-handle="hatsune-miku"] img,
+                .anime-logo-card[data-handle="dragon-ball"] img,
+                .anime-logo-card[data-handle="frieren-beyond-journeys-end"] img,
+                .anime-logo-card[data-handle="frieren-beyond-journey-s-end"] img,
+                .anime-logo-card[data-handle="one-piece"] img,
+                .anime-logo-card[data-handle="jujutsu-kaisen"] img {
+                    max-width: 100%;
+                    max-height: 90px;
+                    transform: scale(1.15);
+                }
+                .anime-logo-card[data-handle="pokemon"]:hover img,
+                .anime-logo-card[data-handle="hatsune-miku"]:hover img,
+                .anime-logo-card[data-handle="dragon-ball"]:hover img,
+                .anime-logo-card[data-handle="frieren-beyond-journeys-end"]:hover img,
+                .anime-logo-card[data-handle="frieren-beyond-journey-s-end"]:hover img,
+                .anime-logo-card[data-handle="one-piece"]:hover img,
+                .anime-logo-card[data-handle="jujutsu-kaisen"]:hover img {
+                    transform: scale(1.25);
                     filter: grayscale(0%);
                 }
 
@@ -134,6 +158,16 @@ export default function CollectionSlider({ collections }: CollectionSliderProps)
                     .anime-logo-card[data-handle="bleach"] img,
                     .anime-logo-card[data-handle="haikyuu"] img {
                         max-height: 75px;
+                    }
+
+                    .anime-logo-card[data-handle="pokemon"] img,
+                    .anime-logo-card[data-handle="hatsune-miku"] img,
+                    .anime-logo-card[data-handle="dragon-ball"] img,
+                    .anime-logo-card[data-handle="frieren-beyond-journeys-end"] img,
+                    .anime-logo-card[data-handle="frieren-beyond-journey-s-end"] img,
+                    .anime-logo-card[data-handle="one-piece"] img,
+                    .anime-logo-card[data-handle="jujutsu-kaisen"] img {
+                        max-height: 65px;
                     }
                 }
             `}} />

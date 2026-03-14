@@ -148,3 +148,31 @@ export async function shopifyFetch({
         throw error;
     }
 }
+
+export async function getSaleConfigFromShopify(context: AppLoadContext) {
+    const QUERY = `
+        query ShopSaleConfig {
+            shop {
+                metafield(namespace: "custom", key: "sale_config") {
+                    value
+                }
+            }
+        }
+    `;
+
+    try {
+        const data = await shopifyFetch({
+            query: QUERY,
+            context,
+        });
+
+        const metafieldValue = data?.shop?.metafield?.value;
+        if (metafieldValue) {
+            return JSON.parse(metafieldValue);
+        }
+    } catch (error) {
+        console.error("Failed to fetch sale config from Shopify:", error);
+    }
+
+    return null;
+}
