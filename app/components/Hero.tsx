@@ -10,7 +10,8 @@ export default function Hero() {
         {
             image: "/images/anime_v3_hero_1.png",
             titleKey: "hero_title_1",
-            subtitleKey: "hero_subtitle_1"
+            subtitleKey: "hero_subtitle_1",
+            objectPosition: "center top"
         },
         {
             image: "/images/anime_v3_hero_2.png",
@@ -51,7 +52,12 @@ export default function Hero() {
                         <img
                             src={slide.image}
                             alt=""
-                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            style={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                                objectPosition: (slide as any).objectPosition || "center"
+                            }}
                             onError={(e) => {
                                 e.currentTarget.src = "https://placehold.co/1200x650?text=Hero+Image+" + (index + 1);
                             }}
