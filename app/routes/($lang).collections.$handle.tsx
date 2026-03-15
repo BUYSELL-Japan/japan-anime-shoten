@@ -1,4 +1,4 @@
-import type { MetaFunction, LoaderFunctionArgs } from "@remix-run/cloudflare";
+import type { MetaFunction, LoaderFunctionArgs, HeadersFunction } from "@remix-run/cloudflare";
 import { json } from "@remix-run/cloudflare";
 import { useLoaderData, useSearchParams, useNavigate } from "@remix-run/react";
 import Header from "~/components/Header";
@@ -6,13 +6,35 @@ import Footer from "~/components/Footer";
 import ProductGrid from "~/components/ProductGrid";
 import { shopifyFetch } from "~/utils/shopify.server";
 import { useTranslation } from "react-i18next";
+import Breadcrumbs from "~/components/Breadcrumbs";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
-    return [
-        { title: `${data?.collection?.title || 'Collection'} | Japan Anime Shoten` },
-        { name: "description", content: `View products for ${data?.collection?.title || 'this collection'}.` },
+    const title = `${data?.collection?.title || 'Collection'} | Japan Anime Shoten`;
+    const description = `Explore our ${data?.collection?.title || 'collection'} of authentic anime goods directly from Japan.`;
+    const imageUrl = data?.collection?.image?.url || data?.collection?.products?.edges?.[0]?.node?.images?.edges?.[0]?.node?.url;
+
+    const metas = [
+        { title },
+        { name: "description", content: description },
+        { property: "og:type", content: "website" },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
     ];
+
+    if (imageUrl) {
+        metas.push({ property: "og:image", content: imageUrl });
+        metas.push({ name: "twitter:image", content: imageUrl });
+    }
+
+    return metas;
 };
+
+export const headers: HeadersFunction = () => ({
+    "Cache-Control": "public, max-age=3600, s-maxage=86400",
+});
 
 export async function loader({ request, params, context }: LoaderFunctionArgs) {
     const locale = params.lang || "en";
@@ -208,7 +230,30 @@ export default function CollectionRoute() {
         <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
             <Header currentCurrency={detectedCurrency} />
 
+            {/* Structured Data (JSON-LD) for SEO */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                        "@context": "https://schema.org/",
+                        "@type": "ItemList",
+                        "itemListElement": products.map((product: any, index: number) => ({
+                            "@type": "ListItem",
+                            "position": index + 1,
+                            "url": typeof window !== "undefined" ? `${window.location.origin}/${locale}/products/${product.handle}` : "",
+                            "name": product.title
+                        }))
+                    })
+                }}
+            />
+
             <main style={{ flex: 1, paddingBottom: "var(--spacing-2xl)" }}>
+                <div className="container" style={{ paddingTop: "20px" }}>
+                    <Breadcrumbs
+                        locale={locale}
+                        items={[{ label: collection.title }]}
+                    />
+                </div>
                 {/* Collection Banner */}
                 {collection.bannerImage && (
                     <div style={{

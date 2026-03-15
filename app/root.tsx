@@ -1,5 +1,6 @@
 import {
     json,
+    type HeadersFunction,
     type LinksFunction,
     type LoaderFunctionArgs,
 } from "@remix-run/cloudflare";
@@ -33,6 +34,10 @@ export const links: LinksFunction = () => [
     },
 ];
 
+export const headers: HeadersFunction = () => ({
+    "Cache-Control": "public, max-age=300, s-maxage=3600",
+});
+
 export async function loader({ request, params, context }: LoaderFunctionArgs) {
     // Attempt to get locale from params (if available) or URL path
     let locale = params.lang;
@@ -50,8 +55,9 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
     }
 
     const saleConfig = await getSaleConfigFromShopify(context);
+    const requestUrl = request.url;
 
-    return json({ locale, saleConfig });
+    return json({ locale, saleConfig, requestUrl });
 }
 
 export let handle = {
@@ -69,8 +75,22 @@ import { useEffect } from "react";
 import { setDynamicSaleConfig } from "./utils/saleConfig";
 
 export default function App() {
-    let { locale, saleConfig } = useLoaderData<typeof loader>();
-    let { i18n } = useTranslation();
+    let { locale, saleConfig, requestUrl } = useLoaderData<typeof loader>();
+    let { i18n: i18nInstance } = useTranslation();
+
+    // Determine absolute canonical URLs for hreflang
+    const url = new URL(requestUrl);
+    const baseUrl = `${url.protocol}//${url.host}`;
+    const pathname = url.pathname;
+    const pathSegments = pathname.split('/').filter(Boolean);
+
+    // Check if the first segment is a locale
+    const firstSegment = pathSegments[0];
+    const isLocaleInPath = i18n.supportedLngs.includes(firstSegment) || firstSegment === 'ja';
+    const subPath = isLocaleInPath ? '/' + pathSegments.slice(1).join('/') : pathname;
+
+    const languages = [...i18n.supportedLngs];
+    if (!languages.includes('ja')) languages.push('ja');
 
     // Initialize dynamic sale config
     if (saleConfig) {
@@ -100,8 +120,24 @@ export default function App() {
     }, []);
 
     return (
-        <html lang={locale} dir={i18n.dir()} suppressHydrationWarning>
+        <html lang={locale} dir={i18nInstance.dir()} suppressHydrationWarning>
             <head>
+                {/* SEO: hreflang tags */}
+                {languages.map(lang => (
+                    <link
+                        key={lang}
+                        rel="alternate"
+                        hrefLang={lang === 'en' ? 'en' : lang}
+                        href={`${baseUrl}/${lang}${subPath}`}
+                    />
+                ))}
+                {/* x-default for international default (using English) */}
+                <link
+                    rel="alternate"
+                    hrefLang="x-default"
+                    href={`${baseUrl}/en${subPath}`}
+                />
+
                 {/* Google tag (gtag.js) */}
                 <script async src="https://www.googletagmanager.com/gtag/js?id=G-EJNLPB6YG0"></script>
                 <script

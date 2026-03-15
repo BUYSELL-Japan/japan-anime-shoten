@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from "@remix-run/cloudflare";
+import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, HeadersFunction } from "@remix-run/cloudflare";
 import { json, redirect } from "@remix-run/cloudflare";
 import { Form, useLoaderData, useNavigation, Link } from "@remix-run/react";
 import { shopifyFetch } from "~/utils/shopify.server";
@@ -16,6 +16,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   const edge = data?.product?.images?.edges?.[0];
   const imageUrl = edge ? edge.node.url : undefined;
 
+  const priceAmount = data?.product?.priceRange?.minVariantPrice?.amount;
+  const currencyCode = data?.product?.priceRange?.minVariantPrice?.currencyCode;
+
   const defaultMeta = [
     { title },
     { name: "description", content: description },
@@ -26,6 +29,13 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
   ];
+
+  if (priceAmount) {
+    defaultMeta.push({ property: "og:price:amount", content: priceAmount });
+  }
+  if (currencyCode) {
+    defaultMeta.push({ property: "og:price:currency", content: currencyCode });
+  }
 
   if (imageUrl) {
     defaultMeta.push({ property: "og:image", content: imageUrl });
@@ -76,6 +86,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
     return json({ error: "System Error" }, { status: 500 });
   }
 }
+
+export const headers: HeadersFunction = () => ({
+  "Cache-Control": "public, max-age=3600, s-maxage=86400",
+});
 
 export async function loader({ request, params, context }: LoaderFunctionArgs) {
   const { handle, lang } = params;
@@ -284,6 +298,8 @@ import { useState, useEffect } from "react";
 import { useCart } from "~/context/CartContext";
 import MakeOfferModal from "~/components/MakeOfferModal";
 import { isSaleActive, getSalePrice, SALE_CONFIG } from "~/utils/saleConfig";
+import Breadcrumbs from "~/components/Breadcrumbs";
+import { getShopifyImageUrl } from "~/utils/image";
 
 export default function ProductDetail() {
   const { product, detectedCurrency, locale, recommendations } = useLoaderData<typeof loader>();
@@ -350,7 +366,37 @@ export default function ProductDetail() {
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header currentCurrency={detectedCurrency} />
 
+      {/* Structured Data (JSON-LD) for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org/",
+            "@type": "Product",
+            "name": product.title,
+            "image": images.map((edge: any) => edge.node.url),
+            "description": product.description,
+            "sku": variantId,
+            "offers": {
+              "@type": "Offer",
+              "url": typeof window !== "undefined" ? window.location.href : "",
+              "priceCurrency": product.currencyCode,
+              "price": isSaleActive() ? getSalePrice(product.rawPrice) : product.rawPrice,
+              "availability": isAvailable ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+              "priceValidUntil": "2026-12-31"
+            }
+          })
+        }}
+      />
+
       <main className="container" style={{ padding: "40px 20px", flex: 1, maxWidth: "100vw", overflowX: "hidden", boxSizing: "border-box" }}>
+        <Breadcrumbs
+          locale={locale}
+          items={[
+            { label: t("collections", { defaultValue: "Collections" }), to: `/${locale}/collections/all` },
+            { label: product.title }
+          ]}
+        />
         <style dangerouslySetInnerHTML={{
           __html: `
           .product-detail-layout {
@@ -420,7 +466,7 @@ export default function ProductDetail() {
               }}
             >
               <img
-                src={mainImage}
+                src={getShopifyImageUrl(mainImage, { width: 800, height: 800, crop: 'center' })}
                 alt={product.title}
                 style={{
                   maxWidth: "100%",
@@ -490,7 +536,7 @@ export default function ProductDetail() {
                   onClick={() => setMainImage(edge.node.url)}
                 >
                   <img
-                    src={edge.node.url}
+                    src={getShopifyImageUrl(edge.node.url, { width: 100, height: 100, crop: 'center' })}
                     alt={`Product thumbnail ${i + 1}`}
                     style={{
                       width: "100%",
@@ -709,7 +755,7 @@ export default function ProductDetail() {
                     }}
                   >
                     <img
-                      src={rec.images?.edges?.[0]?.node?.url || "/placeholder.png"}
+                      src={getShopifyImageUrl(rec.images?.edges?.[0]?.node?.url, { width: 300, height: 300, crop: 'center' }) || "/placeholder.png"}
                       alt={rec.title}
                       style={{ width: "100%", height: "100%", objectFit: "cover" }}
                       loading="lazy"

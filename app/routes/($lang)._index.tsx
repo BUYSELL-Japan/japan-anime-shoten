@@ -1,4 +1,4 @@
-import type { MetaFunction, LoaderFunctionArgs } from "@remix-run/cloudflare";
+import type { MetaFunction, LoaderFunctionArgs, HeadersFunction } from "@remix-run/cloudflare";
 import { json } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
 import Hero from "~/components/Hero";
@@ -11,14 +11,27 @@ import i18next from "~/i18n.server";
 import { useTranslation } from "react-i18next";
 
 export const meta: MetaFunction = () => {
+  const title = "Japan Anime Shoten | Authentic Anime Goods";
+  const description = "Authentic Anime Goods directly from Japan! We ship figures and merchandise worldwide.";
+  const imageUrl = "https://japan-anime-shoten.pages.dev/og-image.jpg"; // フォールバック画像
+
   return [
-    { title: "Japan Anime Shoten | Authentic Anime Goods" },
-    {
-      name: "description",
-      content: "Authentic Anime Goods directly from Japan! We ship figures and merchandise worldwide.",
-    },
+    { title },
+    { name: "description", content: description },
+    { property: "og:type", content: "website" },
+    { property: "og:title", content: title },
+    { property: "og:description", content: description },
+    { property: "og:image", content: imageUrl },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: title },
+    { name: "twitter:description", content: description },
+    { name: "twitter:image", content: imageUrl },
   ];
 };
+
+export const headers: HeadersFunction = () => ({
+  "Cache-Control": "public, max-age=3600, s-maxage=86400",
+});
 
 export async function loader({ request, params, context }: LoaderFunctionArgs) {
   const env = context.cloudflare.env as any;

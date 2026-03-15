@@ -22,6 +22,8 @@ interface ProductCardProps {
 
 import { useCart } from "~/context/CartContext";
 
+import { getShopifyImageUrl } from "~/utils/image";
+
 export default function ProductCard({ product, index = 0 }: ProductCardProps) {
     const { t } = useTranslation();
     const { lang } = useParams();
@@ -118,7 +120,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                         </div>
                     )}
                     <img
-                        src={product.image}
+                        src={getShopifyImageUrl(product.image, { width: 400, height: 400, crop: 'center' })}
                         alt={product.title}
                         style={{
                             width: "100%",
