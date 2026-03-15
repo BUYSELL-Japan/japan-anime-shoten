@@ -47,7 +47,9 @@ export default function Hero() {
                             src={slide.image}
                             alt=""
                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                            e.currentTarget.src = "https://placehold.co/1200x650?text=Hero+Image+" + (index + 1);
+                            onError={(e) => {
+                                e.currentTarget.src = "https://placehold.co/1200x650?text=Hero+Image+" + (index + 1);
+                            }}
                         />
                         <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)" }}></div>
                     </div>
