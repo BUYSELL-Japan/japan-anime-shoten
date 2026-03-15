@@ -94,7 +94,22 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
             image {
               url
             }
-            products(first: 1, sortKey: PRICE, reverse: false) {
+            # thumbnail image product
+            imageProducts: products(first: 1) {
+              edges {
+                node {
+                  images(first: 1) {
+                    edges {
+                      node {
+                        url
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            # featured cheapest product
+            cheapestProducts: products(first: 1, sortKey: PRICE, reverse: false) {
               edges {
                 node {
                   id
