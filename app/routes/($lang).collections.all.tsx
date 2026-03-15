@@ -14,6 +14,8 @@ export const meta: MetaFunction = () => {
     ];
 };
 
+import CollectionSlider from "~/components/CollectionSlider";
+
 export async function loader({ request, params, context }: LoaderFunctionArgs) {
     const locale = params.lang || "en";
     const url = new URL(request.url);
@@ -66,7 +68,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
     }
 
     const QUERY = `
-    query AllProducts($first: Int, $after: String, $last: Int, $before: String) {
+    query AllProductsPage($first: Int, $after: String, $last: Int, $before: String) {
       products(first: $first, after: $after, last: $last, before: $before) {
         pageInfo {
           hasNextPage
@@ -99,6 +101,27 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
               edges {
                 node {
                   url
+                }
+              }
+            }
+          }
+        }
+      }
+      collections(first: 15, sortKey: UPDATED_AT, reverse: true) {
+        edges {
+          node {
+            id
+            title
+            handle
+            image { url }
+            imageProducts: products(first: 1) {
+              edges {
+                node {
+                  images(first: 1) {
+                    edges {
+                      node { url }
+                    }
+                  }
                 }
               }
             }
@@ -148,12 +171,26 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
             };
         };
 
+        const formatCollection = (node: any) => {
+            let imageUrl = node.image?.url || node.imageProducts?.edges[0]?.node?.images?.edges[0]?.node?.url;
+            return {
+                id: node.id,
+                title: node.title,
+                handle: node.handle,
+                image: imageUrl
+            };
+        };
+
         const products = shopifyData.products.edges.map((edge: any) => formatProduct(edge.node));
         const pageInfo = shopifyData.products.pageInfo;
+        const allCollections = (shopifyData.collections?.edges || [])
+            .map((edge: any) => formatCollection(edge.node))
+            .filter((c: any) => c.handle !== 'sale' && c.handle !== 'solo-leveling');
 
         return json({
             products,
             pageInfo,
+            allCollections,
             locale,
             detectedCurrency
         });
@@ -162,6 +199,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
         return json({
             products: [],
             pageInfo: { hasNextPage: false, hasPreviousPage: false, startCursor: null, endCursor: null },
+            allCollections: [],
             locale,
             detectedCurrency: "JPY"
         });
@@ -169,7 +207,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
 }
 
 export default function AllProducts() {
-    const { products, pageInfo, detectedCurrency, locale } = useLoaderData<typeof loader>();
+    const { products, pageInfo, allCollections, detectedCurrency, locale } = useLoaderData<typeof loader>();
     const { t } = useTranslation();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -199,7 +237,7 @@ export default function AllProducts() {
                     <>
                         <ProductGrid products={products} hideHeader={true} />
 
-                        <div style={{ display: "flex", justifyContent: "center", gap: "16px", marginTop: "var(--spacing-2xl)" }}>
+                        <div style={{ display: "flex", justifyContent: "center", gap: "16px", marginTop: "var(--spacing-2xl)", marginBottom: "var(--spacing-3xl)" }}>
                             <button
                                 className="btn-secondary"
                                 onClick={handlePrevious}
@@ -222,6 +260,8 @@ export default function AllProducts() {
                     <div style={{ textAlign: "center", padding: "40px" }}>No products found.</div>
                 )}
             </main>
+
+            <CollectionSlider collections={allCollections} />
 
             <Footer />
         </div>
