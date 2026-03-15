@@ -227,9 +227,10 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
       country: detectedCountry // Pass detected country for pricing
     });
 
+    console.log(`[Loader] shopifyData keys:`, Object.keys(shopifyData || {}));
     console.log(`[Loader] Fetched ${shopifyData.collections?.edges.length || 0} collections`);
-    console.log(`[Loader] Fetched ${shopifyData.featured.edges.length} featured products`);
-    console.log(`[Loader] Fetched ${shopifyData.newArrivals.edges.length} new arrivals`);
+    console.log(`[Loader] Fetched ${shopifyData.newArrivals?.edges?.length || 0} new arrivals`);
+    console.log(`[Loader] Fetched ${shopifyData.saleCollection?.products?.edges?.length || 0} sale products`);
 
     const currencySymbols: Record<string, string> = {
       'USD': '$',
@@ -277,8 +278,8 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
       let imageUrl = node.image?.url;
 
       // 2. If no dedicated image, use the first product's image as thumbnail
-      if (!imageUrl && node.products?.edges?.length > 0) {
-        const firstProduct = node.products.edges[0].node;
+      if (!imageUrl && node.imageProducts?.edges?.length > 0) {
+        const firstProduct = node.imageProducts.edges[0].node;
         if (firstProduct.images?.edges?.length > 0) {
           imageUrl = firstProduct.images.edges[0].node.url;
         }
@@ -324,7 +325,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
 
     // Extract cheapest product from each collection to form featuredProducts
     const featuredProducts = (shopifyData.collections?.edges || [])
-      .map((edge: any) => edge.node.products.edges[0]?.node)
+      .map((edge: any) => edge.node.cheapestProducts?.edges[0]?.node)
       .filter((product: any) => product !== undefined)
       .map((node: any) => formatProduct(node))
       // Distinct products only
@@ -333,7 +334,12 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
       )
       .slice(0, 8); // Limit to 8 featured products
 
-    const newArrivals = shopifyData.newArrivals.edges.map((edge: any) => formatProduct(edge.node));
+    const newArrivals = (shopifyData.newArrivals?.edges || []).map((edge: any) => formatProduct(edge.node));
+
+    console.log(`[Loader] Processed ${collections.length} collections for slider`);
+    console.log(`[Loader] Processed ${featuredProducts.length} featured products`);
+    console.log(`[Loader] Processed ${saleProducts.length} sale products`);
+    console.log(`[Loader] Processed ${newArrivals.length} new arrivals`);
 
     return json({
       collections,
