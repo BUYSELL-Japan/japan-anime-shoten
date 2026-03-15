@@ -321,7 +321,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
     // Filter out "Sale" collection from the collection slider
     const collections = (shopifyData.collections?.edges || [])
       .map((edge: any) => formatCollection(edge.node))
-      .filter((c: any) => c.handle !== 'sale');
+      .filter((c: any) => c.handle !== 'sale' && c.handle !== 'solo-leveling');
 
     // Extract cheapest product from each collection to form featuredProducts
     const featuredProducts = (shopifyData.collections?.edges || [])
