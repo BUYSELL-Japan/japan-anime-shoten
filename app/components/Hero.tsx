@@ -27,7 +27,7 @@ export default function Hero() {
     }, []);
 
     return (
-        <section style={{ position: "relative", height: "500px", overflow: "hidden", background: "#f4f4f4" }}>
+        <section style={{ position: "relative", height: "650px", overflow: "hidden", background: "#f4f4f4" }}>
             {slides.map((slide, index) => (
                 <div
                     key={index}
@@ -47,9 +47,7 @@ export default function Hero() {
                             src={slide.image}
                             alt=""
                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                            onError={(e) => {
-                                e.currentTarget.src = "https://placehold.co/1200x500?text=Hero+Image+" + (index + 1);
-                            }}
+                            e.currentTarget.src = "https://placehold.co/1200x650?text=Hero+Image+" + (index + 1);
                         />
                         <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)" }}></div>
                     </div>
