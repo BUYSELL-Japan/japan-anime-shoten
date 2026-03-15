@@ -17,6 +17,11 @@ export default function Hero() {
             titleKey: "hero_title_2",
             subtitleKey: "hero_subtitle_2"
         },
+        {
+            image: "/images/anime_v3_hero_3.png",
+            titleKey: "hero_title_3",
+            subtitleKey: "hero_subtitle_3"
+        },
     ];
 
     useEffect(() => {
