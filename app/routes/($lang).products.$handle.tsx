@@ -88,7 +88,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export const headers: HeadersFunction = () => ({
-  "Cache-Control": "public, max-age=3600, s-maxage=86400",
+  "Cache-Control": "public, max-age=0, s-maxage=60, must-revalidate",
 });
 
 export async function loader({ request, params, context }: LoaderFunctionArgs) {

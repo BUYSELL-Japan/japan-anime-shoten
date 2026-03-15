@@ -35,7 +35,7 @@ export const links: LinksFunction = () => [
 ];
 
 export const headers: HeadersFunction = () => ({
-    "Cache-Control": "public, max-age=300, s-maxage=3600",
+    "Cache-Control": "public, max-age=0, s-maxage=60, must-revalidate",
 });
 
 export async function loader({ request, params, context }: LoaderFunctionArgs) {
