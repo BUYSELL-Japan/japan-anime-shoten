@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { Link, useParams } from "@remix-run/react";
 import ProductCard from "./ProductCard";
 import type { Product } from "./ProductCard";
 import { useTranslation } from "react-i18next";
@@ -9,6 +10,8 @@ interface NewArrivalsProps {
 
 export default function NewArrivals({ products }: NewArrivalsProps) {
     const { t } = useTranslation();
+    const { lang } = useParams();
+    const currentLang = lang || "en";
     const scrollRef = useRef<HTMLDivElement>(null);
 
     if (!products || products.length === 0) {
@@ -22,7 +25,7 @@ export default function NewArrivals({ products }: NewArrivalsProps) {
                     <h2 className="title-main" style={{ marginBottom: 0 }}>
                         <span style={{ borderBottom: "3px solid var(--color-primary)" }}>{t("new_arrivals")}</span>
                     </h2>
-                    <a href="#" className="text-red" style={{ fontWeight: "700", fontSize: "0.9rem" }}>{t("view_details", { defaultValue: "View All New Items" })} &rarr;</a>
+                    <Link to={`/${currentLang}/collections/all`} className="text-red" style={{ fontWeight: "700", fontSize: "0.9rem" }}>{t("view_details", { defaultValue: "View All New Items" })} &rarr;</Link>
                 </div>
 
                 <div className="grid-products">
