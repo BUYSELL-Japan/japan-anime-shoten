@@ -85,7 +85,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
 
   const QUERY = `
     query HomePage {
-      collections(first: 10, sortKey: UPDATED_AT, reverse: true) {
+      collections(first: 12, sortKey: UPDATED_AT, reverse: true) {
         edges {
           node {
             id
@@ -94,9 +94,27 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
             image {
               url
             }
-            products(first: 1) {
+            products(first: 1, sortKey: PRICE, reverse: false) {
               edges {
                 node {
+                  id
+                  title
+                  handle
+                  availableForSale
+                  priceRange {
+                    minVariantPrice {
+                      amount
+                      currencyCode
+                    }
+                  }
+                  variants(first: 1) {
+                    edges {
+                      node {
+                        id
+                        quantityAvailable
+                      }
+                    }
+                  }
                   images(first: 1) {
                     edges {
                       node {
@@ -104,37 +122,6 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
                       }
                     }
                   }
-                }
-              }
-            }
-          }
-        }
-      }
-      featured: products(first: 8, sortKey: BEST_SELLING) {
-        edges {
-          node {
-            id
-            title
-            handle
-            availableForSale
-            priceRange {
-              minVariantPrice {
-                amount
-                currencyCode
-              }
-            }
-            variants(first: 1) {
-              edges {
-                node {
-                  id
-                  quantityAvailable
-                }
-              }
-            }
-            images(first: 1) {
-              edges {
-                node {
-                  url
                 }
               }
             }
@@ -319,7 +306,18 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
     const collections = (shopifyData.collections?.edges || [])
       .map((edge: any) => formatCollection(edge.node))
       .filter((c: any) => c.handle !== 'sale');
-    const featuredProducts = shopifyData.featured.edges.map((edge: any) => formatProduct(edge.node));
+
+    // Extract cheapest product from each collection to form featuredProducts
+    const featuredProducts = (shopifyData.collections?.edges || [])
+      .map((edge: any) => edge.node.products.edges[0]?.node)
+      .filter((product: any) => product !== undefined)
+      .map((node: any) => formatProduct(node))
+      // Distinct products only
+      .filter((product: any, index: number, self: any[]) =>
+        index === self.findIndex((p: any) => p.id === product.id)
+      )
+      .slice(0, 8); // Limit to 8 featured products
+
     const newArrivals = shopifyData.newArrivals.edges.map((edge: any) => formatProduct(edge.node));
 
     return json({
