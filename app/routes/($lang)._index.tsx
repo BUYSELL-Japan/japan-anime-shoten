@@ -98,7 +98,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
 
   const QUERY = `
     query HomePage {
-      collections(first: 12, sortKey: UPDATED_AT, reverse: true) {
+      collections(first: 50, sortKey: UPDATED_AT, reverse: true) {
         edges {
           node {
             id
@@ -348,6 +348,8 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
       .slice(0, 8); // Limit to 8 featured products
 
     const newArrivals = (shopifyData.newArrivals?.edges || []).map((edge: any) => formatProduct(edge.node));
+
+    console.log("[Debug] Collection Handles:", shopifyData.collections?.edges.map((e: any) => e.node.handle));
 
     console.log(`[Loader] Processed ${collections.length} collections for slider`);
     console.log(`[Loader] Processed ${featuredProducts.length} featured products`);

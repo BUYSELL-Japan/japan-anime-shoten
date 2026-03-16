@@ -184,7 +184,16 @@ export default function CollectionSlider({ collections }: CollectionSliderProps)
 
             <div className="anime-logo-grid">
                 {collections.map((collection) => {
-                    const logoFile = logoMap[collection.handle];
+                    let logoFile = logoMap[collection.handle];
+
+                    // Fallback: Check title if handle doesn't match
+                    if (!logoFile) {
+                        const lowTitle = collection.title.toLowerCase();
+                        if (lowTitle.includes("zero")) {
+                            logoFile = "ReZero.png";
+                        }
+                    }
+
                     const logoSrc = logoFile ? `/images/logos/${logoFile}` : collection.image;
 
                     return (

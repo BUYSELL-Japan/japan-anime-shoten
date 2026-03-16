@@ -107,7 +107,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
           }
         }
       }
-      collections(first: 15, sortKey: UPDATED_AT, reverse: true) {
+      collections(first: 50, sortKey: UPDATED_AT, reverse: true) {
         edges {
           node {
             id
