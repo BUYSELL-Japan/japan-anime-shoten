@@ -27,6 +27,8 @@ const logoMap: Record<string, string> = {
     "demon-slayer": "kimetsunoyaiba.jpg",
     "one-piece": "One piece.jpg",
     "pokemon": "Pokemon.png",
+    "re-zero-starting-life-in-another-world": "ReZero.png",
+    "re-zero": "ReZero.png",
 };
 
 export default function CollectionSlider({ collections }: CollectionSliderProps) {
@@ -98,7 +100,9 @@ export default function CollectionSlider({ collections }: CollectionSliderProps)
                 .anime-logo-card[data-handle="frieren-beyond-journeys-end"] img,
                 .anime-logo-card[data-handle="frieren-beyond-journey-s-end"] img,
                 .anime-logo-card[data-handle="one-piece"] img,
-                .anime-logo-card[data-handle="jujutsu-kaisen"] img {
+                .anime-logo-card[data-handle="jujutsu-kaisen"] img,
+                .anime-logo-card[data-handle="re-zero-starting-life-in-another-world"] img,
+                .anime-logo-card[data-handle="re-zero"] img {
                     max-width: 100%;
                     max-height: 90px;
                     transform: scale(1.15);
@@ -109,7 +113,9 @@ export default function CollectionSlider({ collections }: CollectionSliderProps)
                 .anime-logo-card[data-handle="frieren-beyond-journeys-end"]:hover img,
                 .anime-logo-card[data-handle="frieren-beyond-journey-s-end"]:hover img,
                 .anime-logo-card[data-handle="one-piece"]:hover img,
-                .anime-logo-card[data-handle="jujutsu-kaisen"]:hover img {
+                .anime-logo-card[data-handle="jujutsu-kaisen"]:hover img,
+                .anime-logo-card[data-handle="re-zero-starting-life-in-another-world"]:hover img,
+                .anime-logo-card[data-handle="re-zero"]:hover img {
                     transform: scale(1.25);
                     filter: grayscale(0%);
                 }
