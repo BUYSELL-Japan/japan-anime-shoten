@@ -402,7 +402,7 @@ export default function Index() {
       <main style={{ flex: 1 }}>
         <Hero />
         <SaleCountdown />
-        <NewArrivals products={newArrivals} />
+        <ProductGrid products={featuredProducts} />
 
         {/* Special Sale Section */}
         {saleProducts && saleProducts.length > 0 && (
@@ -516,7 +516,7 @@ export default function Index() {
 
         <CollectionSlider collections={collections} />
         <TrustBadges />
-        <ProductGrid products={featuredProducts} />
+        <NewArrivals products={newArrivals} />
         <ShopIntro />
       </main>
 
